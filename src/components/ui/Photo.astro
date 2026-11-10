@@ -1,0 +1,71 @@
+---
+import { Picture } from 'astro:assets';
+import PhotoPlaceholder from './PhotoPlaceholder.astro';
+import { getPhoto, fitWidths } from '../../utils/photos';
+
+/**
+ * Shows a photo from src/assets/photos/ as an optimized <picture>
+ * (AVIF + WebP, responsive sizes, lazy-loaded) — or a placeholder box
+ * if the file hasn't been added yet.
+ */
+interface Props {
+  file: string;
+  alt: string;
+  /** Text on the placeholder box */
+  placeholder: string;
+  widths: number[];
+  /** How wide the image is shown at each screen size (HTML `sizes`) */
+  sizes: string;
+  /** Placeholder box shape, e.g. "4 / 5" */
+  ratio?: string;
+  /** Fill the parent box (object-fit: cover). Parent must be position: relative. */
+  fill?: boolean;
+  /** Load immediately with high priority (hero only) */
+  priority?: boolean;
+  rounded?: boolean;
+  /** Put the placeholder label at the top instead of the middle */
+  placeholderAtTop?: boolean;
+  class?: string;
+  style?: string;
+}
+
+const {
+  file,
+  alt,
+  placeholder,
+  widths,
+  sizes,
+  ratio,
+  fill = false,
+  priority = false,
+  rounded = true,
+  placeholderAtTop = false,
+  class: className,
+  style,
+} = Astro.props;
+
+const image = getPhoto(file);
+---
+
+{
+  image ? (
+    <Picture
+      src={image}
+      alt={alt}
+      widths={fitWidths(image, widths)}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding={priority ? 'sync' : 'async'}
+      fetchpriority={priority ? 'high' : undefined}
+      class:list={[
+        fill ? 'absolute inset-0 h-full w-full object-cover' : 'block h-auto w-full',
+        rounded && 'rounded-photo',
+        className,
+      ]}
+      style={style}
+    />
+  ) : (
+    <PhotoPlaceholder label={placeholder} file={file} ratio={ratio} fill={fill} rounded={rounded} labelAtTop={placeholderAtTop} class={className} />
+  )
+}

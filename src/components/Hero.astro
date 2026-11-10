@@ -1,0 +1,59 @@
+---
+import { site } from '../data/site';
+import Photo from './ui/Photo.astro';
+import { splitEmphasis } from '../utils/text';
+
+const { hero } = site;
+const headline = splitEmphasis(hero.headline);
+---
+
+<section id="home" aria-labelledby="hero-title" class="relative isolate flex min-h-svh items-end overflow-hidden">
+  <!-- Cover photo -->
+  <div class="absolute inset-0 -z-10">
+    <Photo
+      file={hero.photo.file}
+      alt={hero.photo.alt}
+      placeholder={hero.photo.placeholder}
+      widths={[640, 960, 1280, 1600, 1920, 2400]}
+      sizes="100vw"
+      fill
+      priority
+      rounded={false}
+      placeholderAtTop
+      style={`object-position: ${hero.photoFocus}`}
+    />
+    <div class="hero-overlay absolute inset-0" aria-hidden="true"></div>
+  </div>
+
+  <div class="shell pt-28 pb-28 sm:pb-32 lg:pb-36">
+    <div class="max-w-3xl">
+      <p class="eyebrow hero-in max-sm:tracking-[0.2em] max-sm:before:hidden">{hero.eyebrow}</p>
+      <h1
+        id="hero-title"
+        class="hero-in mt-6 text-[clamp(2.9rem,12.5vw,6.5rem)] leading-[0.98] text-cream"
+        style="--delay: 120ms"
+      >
+        {headline.map((part) => (part.em ? <em class="text-gold">{part.text}</em> : part.text))}
+      </h1>
+      <p class="hero-in mt-6 max-w-xl text-base text-cream/85 sm:text-lg" style="--delay: 240ms">
+        {hero.tagline}
+      </p>
+      <div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4" style="--delay: 360ms">
+        <a href={hero.primaryCta.href} class="btn btn-gold">{hero.primaryCta.label}</a>
+        <a href={hero.secondaryCta.href} target="_blank" rel="noopener" class="btn btn-outline">
+          {hero.secondaryCta.label}<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <a
+    href="#featured"
+    class="absolute bottom-5 left-1/2 flex min-h-11 min-w-11 -translate-x-1/2 flex-col items-center gap-2 text-[0.6875rem] font-medium tracking-[0.3em] text-cream/80 uppercase"
+    aria-label="Scroll to the next section"
+  >
+    <span aria-hidden="true">{hero.scrollLabel}</span>
+    <span class="scroll-cue-line" aria-hidden="true"></span>
+  </a>
+</section>

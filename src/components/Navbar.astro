@@ -1,0 +1,84 @@
+---
+import { site } from '../data/site';
+import Brand from './ui/Brand.astro';
+import Icon from './ui/Icon.astro';
+---
+
+<header id="site-header" class="site-header fixed inset-x-0 top-0 z-50 border-b border-transparent">
+  <div class="shell flex h-16 items-center justify-between gap-6 lg:h-20">
+    <a href="#home" class="-my-2 flex min-h-11 items-center py-2" data-brand-link>
+      <Brand />
+    </a>
+
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-7 xl:gap-9">
+        {
+          site.nav.map((link) => (
+            <li>
+              <a href={link.href} class="nav-link">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href={site.navCta.href} target="_blank" rel="noopener" class="btn btn-gold hidden min-h-11 px-5 lg:inline-flex">
+        {site.navCta.label}<span class="sr-only"> (opens in a new tab)</span>
+      </a>
+      <button
+        type="button"
+        class="-mr-2.5 inline-flex size-11 items-center justify-center rounded-full text-cream lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="sr-only">Menu</span>
+        <span class="hamburger" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Full-screen mobile menu. Kept outside <header> so it can cover the whole screen. -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 flex flex-col overflow-y-auto bg-ink pt-24 pb-10 lg:hidden" hidden>
+  <nav aria-label="Mobile" class="shell">
+    <ul class="flex flex-col">
+      {
+        site.nav.map((link, i) => (
+          <li class="border-b border-line/70">
+            <a href={link.href} class="flex min-h-14 items-baseline gap-4 py-3 font-serif text-[2.1rem] leading-tight text-cream">
+              <span class="font-sans text-xs tracking-[0.2em] text-gold" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="shell mt-10 flex flex-col gap-6">
+    <a href={site.navCta.href} target="_blank" rel="noopener" class="btn btn-gold w-full">
+      <Icon name="messenger" class="size-5" />
+      {site.navCta.label}<span class="sr-only"> (opens in a new tab)</span>
+    </a>
+    <div class="flex flex-col gap-1 text-muted">
+      <a href={site.contact.phoneHref} class="inline-flex min-h-11 items-center gap-3">
+        <Icon name="phone" class="size-4 text-gold" />
+        {site.contact.phoneDisplay}
+      </a>
+      <a href={`mailto:${site.contact.email}`} class="inline-flex min-h-11 items-center gap-3 break-all">
+        <Icon name="mail" class="size-4 text-gold" />
+        {site.contact.email}
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/menu.ts';
+</script>

@@ -1,0 +1,86 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+import { isPlaceholder } from '../utils/text';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.seo.title, description = site.seo.description } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(site.seo.ogImage, Astro.site);
+
+// Only the font weights the design uses: Cormorant Garamond 500, 500 italic, 600; Inter 400, 500, 600.
+const fontsHref =
+  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap';
+
+// Structured data so Google understands this is a local photography business.
+const sameAs = [site.social.facebook, site.social.instagram].filter((url) => !isPlaceholder(url));
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.brand,
+  description,
+  url: canonical.href,
+  image: ogImage.href,
+  telephone: site.contact.phoneIntl,
+  email: site.contact.email,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.location.town,
+    addressRegion: site.location.province,
+    addressCountry: site.location.countryCode,
+  },
+  sameAs,
+};
+// Escape "<" so the JSON can never close the <script> tag early.
+const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content={site.seo.themeColor} />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={fontsHref} />
+
+    <!-- Open Graph (Facebook, Messenger) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.seo.ogImageAlt} />
+    <meta property="og:locale" content={site.seo.locale} />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline type="application/ld+json" set:html={jsonLdString} />
+  </head>
+  <body class="bg-ink text-cream">
+    <a href="#main" class="skip-link">Skip to content</a>
+    <slot />
+  </body>
+</html>

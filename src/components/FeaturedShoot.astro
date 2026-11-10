@@ -1,0 +1,38 @@
+---
+import { site } from '../data/site';
+import Photo from './ui/Photo.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+import DraftNote from './ui/DraftNote.astro';
+import Icon from './ui/Icon.astro';
+
+const { featured } = site;
+---
+
+<section id="featured" aria-labelledby="featured-title" class="section">
+  <div class="shell grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+    <div class="group relative aspect-[3/2] overflow-hidden rounded-photo lg:col-span-7 lg:aspect-[4/3]" data-reveal>
+      <Photo
+        file={featured.photo.file}
+        alt={featured.photo.alt}
+        placeholder={featured.photo.placeholder}
+        widths={[480, 720, 960, 1280, 1600]}
+        sizes="(min-width: 1200px) 680px, (min-width: 1024px) 57vw, calc(100vw - 2.5rem)"
+        fill
+        class="zoom-img"
+      />
+    </div>
+
+    <div class="lg:col-span-5">
+      <SectionHeading id="featured-title" eyebrow={featured.eyebrow} title={featured.title} />
+      <div data-reveal style="--reveal-delay: 120ms">
+        <p class="mt-6 text-xs font-medium tracking-[0.2em] text-muted uppercase">{featured.meta}</p>
+        <p class="mt-4 text-base text-cream/85 sm:text-lg">{featured.story}</p>
+        {featured.storyIsPlaceholder && <DraftNote class="mt-4" />}
+        <a href={featured.link.href} class="arrow-link mt-8">
+          {featured.link.label}
+          <Icon name="arrow" class="arrow size-4" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

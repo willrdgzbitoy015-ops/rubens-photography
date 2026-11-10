@@ -1,0 +1,83 @@
+---
+import { site } from '../data/site';
+import SectionHeading from './ui/SectionHeading.astro';
+import Icon from './ui/Icon.astro';
+
+const { contactSection: c, contact, social, bookingUrl } = site;
+---
+
+<section id="contact" aria-labelledby="contact-title" class="section relative isolate overflow-hidden">
+  <!-- Soft gold glow behind the call to action -->
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,rgb(201_169_110/0.10),transparent_70%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell">
+    <SectionHeading id="contact-title" eyebrow={c.eyebrow} title={c.title} intro={c.intro} align="center" />
+
+    <div class="mt-10 flex flex-col items-center gap-4 text-center" data-reveal style="--reveal-delay: 100ms">
+      <a
+        href={bookingUrl}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-gold min-h-16 w-full px-5 text-[0.875rem] tracking-[0.06em] sm:w-auto sm:px-10 sm:text-[0.9375rem] sm:tracking-[0.14em]"
+      >
+        <Icon name="messenger" class="size-6" />
+        {c.primaryCta}
+        <span class="sr-only"> (opens in a new tab)</span>
+      </a>
+      <p class="text-sm text-muted">{c.replyNote}</p>
+    </div>
+
+    <!-- Other ways to reach Ruben -->
+    <ul class="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3" data-reveal style="--reveal-delay: 180ms">
+      <li class="flex">
+        <a
+          href={social.facebook}
+          target="_blank"
+          rel="noopener"
+          class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center"
+        >
+          <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+            <Icon name="facebook" class="size-5" />
+          </span>
+          <span class="font-medium text-cream">{c.facebookLabel}</span>
+          <span class="text-sm text-muted">{site.brand}<span class="sr-only"> (opens in a new tab)</span></span>
+        </a>
+      </li>
+
+      <li class="card flex flex-col items-center gap-3 p-6 text-center">
+        <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+          <Icon name="phone" class="size-5" />
+        </span>
+        <span class="font-medium text-cream">{c.phoneLabel}</span>
+        <span class="flex gap-2">
+          <a
+            href={contact.phoneHref}
+            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+          >
+            {c.callLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
+          </a>
+          <a
+            href={contact.smsHref}
+            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+          >
+            {c.textLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
+          </a>
+        </span>
+      </li>
+
+      <li class="flex">
+        <a href={`mailto:${contact.email}`} class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center">
+          <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+            <Icon name="mail" class="size-5" />
+          </span>
+          <span class="font-medium text-cream">{c.emailLabel}</span>
+          <span class="text-sm break-all text-muted">{contact.email}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>

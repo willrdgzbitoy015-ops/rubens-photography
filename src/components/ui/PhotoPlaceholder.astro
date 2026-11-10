@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Gray box shown where a photo will go, until the real file is added.
+ * Uses <span>s so it can sit inside buttons and links.
+ */
+interface Props {
+  /** e.g. "Hero photo — horizontal, 2400px wide" */
+  label: string;
+  /** Where the file should go, relative to src/assets/photos/ */
+  file?: string;
+  /** CSS aspect-ratio, e.g. "3 / 2". Ignored when `fill` is set. */
+  ratio?: string;
+  /** Stretch to fill the parent (parent must be position: relative). */
+  fill?: boolean;
+  rounded?: boolean;
+  /** Put the label at the top instead of the middle (e.g. behind hero text) */
+  labelAtTop?: boolean;
+  class?: string;
+}
+
+const { label, file, ratio = '3 / 2', fill = false, rounded = true, labelAtTop = false, class: className } = Astro.props;
+---
+
+<span
+  role="img"
+  aria-label={`Photo placeholder: ${label}`}
+  class:list={[
+    'photo-placeholder',
+    fill ? 'absolute inset-0 h-full w-full' : 'relative w-full',
+    rounded && 'rounded-photo',
+    className,
+  ]}
+  style={fill ? undefined : `aspect-ratio: ${ratio}`}
+>
+  <span class:list={['photo-placeholder-label', labelAtTop && 'justify-start! pt-24! lg:justify-center! lg:pt-5! lg:pl-[50%]!']}>
+    <Icon name="camera" class="size-7 text-gold" />
+    <span>{label}</span>
+    {file && <span class="photo-placeholder-file">src/assets/photos/{file}</span>}
+  </span>
+</span>
