@@ -219,7 +219,7 @@ export const site = {
     stats: [
       { value: `${years}+`, label: 'Years of experience' },
       { value: '7.7K', label: 'Facebook followers' },
-      { value: '100%', label: 'Recommend (10 reviews)' },
+      { value: '100%', label: 'Recommend (12 reviews)' },
     ],
     serviceArea: `Based in ${location.town}, ${location.province}. Available across ${location.serviceArea}.`,
     photo: {
@@ -257,29 +257,39 @@ export const site = {
   },
 
   // ── 9. Testimonials ───────────────────────────────────────────────────────
-  // PLACEHOLDERS — paste real client reviews (with permission), then set
-  // isPlaceholder to false. Never publish made-up reviews.
+  // Real recommendations from Ruben's Facebook Page, kept word-for-word.
+  // Never publish made-up reviews. To add one, copy it from Facebook and add
+  // another { quote, name, source } entry below.
   testimonials: {
     eyebrow: 'Kind Words',
     title: 'What clients *say*',
-    summary: '100% recommend · 10 reviews on Facebook',
+    summary: '100% recommend · 12 reviews on Facebook',
     summaryLink: { label: 'Read the reviews', href: social.facebook },
-    isPlaceholder: true,
+    isPlaceholder: false,
     items: [
       {
-        quote: '[Placeholder review] Paste a real client review here — for example, what they loved most about their debut photos.',
-        name: '[Client name]',
-        shoot: 'Debut',
+        quote:
+          'Thank you so much Sir Ruben for beautifully capturing our special day. Highly recommended—professional, easy to work with, and truly talented! ❤️',
+        name: 'Flor R. Osabel',
+        source: 'Recommended on Facebook',
       },
       {
-        quote: '[Placeholder review] Short, specific reviews work best: the occasion, how the shoot felt, and how the photos turned out.',
-        name: '[Client name]',
-        shoot: 'Birthday',
+        quote: 'The best team very accommodating and friendly kaayo plus bootan pa jud.',
+        name: 'Irish Joy Pilapil Pintoy-Samuray',
+        source: 'Recommended on Facebook',
       },
       {
-        quote: "[Placeholder review] You can copy reviews from the Reviews tab on Ruben's Facebook page — ask the client first.",
-        name: '[Client name]',
-        shoot: 'Event',
+        quote:
+          "Very recommendable jud kaayoooo. Since day one palang very nice gyud ang service, so if gusto mo ug sulit and ma satisfied mo, Ruben's Photography is for you 👌🏼",
+        name: 'Crishia Valenzuela',
+        source: 'Recommended on Facebook',
+      },
+      {
+        // Shortened: the full review continues on Facebook.
+        quote:
+          'I would like to recommend those who plan to get a photographer na Kani ang kuhaon Kay very accommodating, approachable and even you are not photogenic person or Dili hilig ug picture picture, tabangan jud ka ni sir Ruben and his team to make your photos more beautiful. I assure you na ug kini inyung kuhaon, Dili Jud mo maowaw Kay maayo jud Sila…',
+        name: 'Jomalyn Gerolaga Graciano-Carlos',
+        source: 'Recommended on Facebook',
       },
     ],
   },

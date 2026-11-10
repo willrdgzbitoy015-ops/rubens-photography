@@ -22,18 +22,24 @@ const { testimonials } = site;
 
     {testimonials.isPlaceholder && <DraftNote class="mt-8" />}
 
-    <ul class="mt-10 grid gap-5 md:grid-cols-3 lg:mt-14">
+    <!-- Masonry: reviews of different lengths pack neatly into 2 columns -->
+    <ul class="mt-10 gap-5 md:columns-2 lg:mt-14">
       {
         testimonials.items.map((item, i) => (
-          <li class="flex" data-reveal style={`--reveal-delay: ${i * 100}ms`}>
+          <li class="mb-5 break-inside-avoid" data-reveal style={`--reveal-delay: ${(i % 2) * 100}ms`}>
             <figure class="card card-hover flex w-full flex-col p-7 sm:p-8">
               <Icon name="quote" class="size-7 text-gold/80" strokeWidth={1.25} />
-              <blockquote class="mt-5 grow font-serif text-[1.35rem] leading-snug text-cream italic">
+              <blockquote class="mt-5 font-serif text-[1.35rem] leading-snug text-cream italic">
                 <p>{item.quote}</p>
               </blockquote>
-              <figcaption class="mt-7 border-t border-line pt-5">
-                <span class="block font-medium text-cream">{item.name}</span>
-                <span class="mt-0.5 block text-xs tracking-[0.18em] text-gold uppercase">{item.shoot}</span>
+              <figcaption class="mt-7 flex items-center gap-3 border-t border-line pt-5">
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-gold" aria-hidden="true">
+                  <Icon name="facebook" class="size-4" />
+                </span>
+                <span>
+                  <span class="block font-medium text-cream">{item.name}</span>
+                  <span class="mt-0.5 block text-xs tracking-[0.18em] text-gold uppercase">{item.source}</span>
+                </span>
               </figcaption>
             </figure>
           </li>
