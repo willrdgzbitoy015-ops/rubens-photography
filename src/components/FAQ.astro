@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
+import { hasPlaceholder } from '../utils/text';
 
 const { faq } = site;
 ---
@@ -11,7 +12,7 @@ const { faq } = site;
   <div class="shell grid gap-10 lg:grid-cols-12 lg:gap-16">
     <div class="lg:col-span-5">
       <SectionHeading id="faq-title" eyebrow={faq.eyebrow} title={faq.title} intro={faq.intro}>
-        {faq.answersArePlaceholder && <DraftNote class="mt-6" />}
+        {faq.items.some((item) => hasPlaceholder(item.q, item.a)) && <DraftNote class="mt-6" />}
       </SectionHeading>
     </div>
 
@@ -19,9 +20,9 @@ const { faq } = site;
       {
         faq.items.map((item) => (
           <details class="faq-item group border-b border-line">
-            <summary class="flex min-h-11 items-center justify-between gap-6 py-6 font-serif text-[1.5rem] leading-snug text-cream transition-colors hover:text-gold sm:text-[1.65rem]">
+            <summary class="flex min-h-11 items-center justify-between gap-6 py-6 font-serif text-[1.5rem] leading-snug text-cream transition-colors hover:text-tan sm:text-[1.65rem]">
               {item.q}
-              <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-gold transition-colors group-open:border-gold/60">
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-tan transition-colors group-open:border-tan/60">
                 <Icon name="plus" class="faq-icon size-4" />
               </span>
             </summary>

@@ -2,14 +2,15 @@
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import Icon from './ui/Icon.astro';
+import BookButton from './ui/BookButton.astro';
 
-const { contactSection: c, contact, social, bookingUrl } = site;
+const { contactSection: c, contact, social } = site;
 ---
 
 <section id="contact" aria-labelledby="contact-title" class="section relative isolate overflow-hidden">
-  <!-- Soft gold glow behind the call to action -->
+  <!-- Soft tan glow behind the call to action -->
   <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,rgb(201_169_110/0.10),transparent_70%)]"
+    class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,color-mix(in_srgb,var(--color-tan)_10%,transparent),transparent_70%)]"
     aria-hidden="true"
   >
   </div>
@@ -18,16 +19,11 @@ const { contactSection: c, contact, social, bookingUrl } = site;
     <SectionHeading id="contact-title" eyebrow={c.eyebrow} title={c.title} intro={c.intro} align="center" />
 
     <div class="mt-10 flex flex-col items-center gap-4 text-center" data-reveal style="--reveal-delay: 100ms">
-      <a
-        href={bookingUrl}
-        target="_blank"
-        rel="noopener"
-        class="btn btn-gold min-h-16 w-full px-5 text-[0.875rem] tracking-[0.06em] sm:w-auto sm:px-10 sm:text-[0.9375rem] sm:tracking-[0.14em]"
-      >
-        <Icon name="messenger" class="size-6" />
-        {c.primaryCta}
-        <span class="sr-only"> (opens in a new tab)</span>
-      </a>
+      <BookButton
+        label={c.primaryCta}
+        icon
+        class="min-h-16 w-full px-5 text-[0.875rem] tracking-[0.06em] sm:w-auto sm:px-10 sm:text-[0.9375rem] sm:tracking-[0.14em]"
+      />
       <p class="text-sm text-muted">{c.replyNote}</p>
     </div>
 
@@ -40,7 +36,7 @@ const { contactSection: c, contact, social, bookingUrl } = site;
           rel="noopener"
           class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center"
         >
-          <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+          <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
             <Icon name="facebook" class="size-5" />
           </span>
           <span class="font-medium text-cream">{c.facebookLabel}</span>
@@ -49,20 +45,20 @@ const { contactSection: c, contact, social, bookingUrl } = site;
       </li>
 
       <li class="card flex flex-col items-center gap-3 p-6 text-center">
-        <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+        <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
           <Icon name="phone" class="size-5" />
         </span>
         <span class="font-medium text-cream">{c.phoneLabel}</span>
         <span class="flex gap-2">
           <a
             href={contact.phoneHref}
-            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
           >
             {c.callLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
           </a>
           <a
             href={contact.smsHref}
-            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
           >
             {c.textLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
           </a>
@@ -71,7 +67,7 @@ const { contactSection: c, contact, social, bookingUrl } = site;
 
       <li class="flex">
         <a href={`mailto:${contact.email}`} class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center">
-          <span class="flex size-12 items-center justify-center rounded-full border border-line text-gold">
+          <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
             <Icon name="mail" class="size-5" />
           </span>
           <span class="font-medium text-cream">{c.emailLabel}</span>

@@ -17,10 +17,21 @@ interface Props {
   rounded?: boolean;
   /** Put the label at the top instead of the middle (e.g. behind hero text) */
   labelAtTop?: boolean;
+  /** Small icon + short label only, for tiny thumbnails */
+  compact?: boolean;
   class?: string;
 }
 
-const { label, file, ratio = '3 / 2', fill = false, rounded = true, labelAtTop = false, class: className } = Astro.props;
+const {
+  label,
+  file,
+  ratio = '3 / 2',
+  fill = false,
+  rounded = true,
+  labelAtTop = false,
+  compact = false,
+  class: className,
+} = Astro.props;
 ---
 
 <span
@@ -34,8 +45,14 @@ const { label, file, ratio = '3 / 2', fill = false, rounded = true, labelAtTop =
   ]}
   style={fill ? undefined : `aspect-ratio: ${ratio}`}
 >
-  <span class:list={['photo-placeholder-label', labelAtTop && 'justify-start! pt-24! lg:justify-center! lg:pt-5! lg:pl-[50%]!']}>
-    <Icon name="camera" class="size-7 text-gold" />
+  <span
+    class:list={[
+      'photo-placeholder-label',
+      compact && 'gap-1! p-1! text-[0.6875rem]!',
+      labelAtTop && 'justify-start! pt-24! lg:justify-center! lg:pt-5! lg:pl-[50%]!',
+    ]}
+  >
+    <Icon name="camera" class:list={['text-tan', compact ? 'size-4' : 'size-7']} />
     <span>{label}</span>
     {file && <span class="photo-placeholder-file">src/assets/photos/{file}</span>}
   </span>

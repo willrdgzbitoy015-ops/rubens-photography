@@ -1,22 +1,26 @@
 ---
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
+import DraftNote from './ui/DraftNote.astro';
+import { hasPlaceholder } from '../utils/text';
 
 const { services } = site;
 ---
 
 <section id="services" aria-labelledby="services-title" class="section border-t border-line/60 bg-surface/40">
   <div class="shell">
-    <SectionHeading id="services-title" eyebrow={services.eyebrow} title={services.title} intro={services.intro} />
+    <SectionHeading id="services-title" eyebrow={services.eyebrow} title={services.title} intro={services.intro}>
+      {services.items.some((item) => hasPlaceholder(item.title, item.text)) && <DraftNote class="mt-6" />}
+    </SectionHeading>
 
     <ul class="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-16 lg:grid-cols-4">
       {
         services.items.map((item, i) => (
           <li class="card card-hover flex flex-col p-7 sm:p-8" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
-            <span class="font-serif text-4xl text-gold italic" aria-hidden="true">
+            <span class="font-serif text-4xl text-tan italic" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
-            <h3 class="mt-8 text-[1.85rem] text-cream sm:mt-10">{item.title}</h3>
+            <h3 class="mt-8 text-[1.85rem] text-cream sm:mt-10 lg:text-[1.7rem]">{item.title}</h3>
             <p class="mt-3 text-[0.9375rem] leading-relaxed text-muted">{item.text}</p>
           </li>
         ))

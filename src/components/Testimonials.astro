@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
+import { hasPlaceholder } from '../utils/text';
 
 const { testimonials } = site;
 ---
@@ -14,13 +15,13 @@ const { testimonials } = site;
       <div class="flex flex-col items-start gap-1 lg:items-end" data-reveal>
         <p class="text-[0.9375rem] text-cream">{testimonials.summary}</p>
         <a href={testimonials.summaryLink.href} class="arrow-link" target="_blank" rel="noopener noreferrer">
-          {testimonials.summaryLink.label}
+          {testimonials.summaryLink.label}<span class="sr-only"> on Facebook (opens in new tab)</span>
           <Icon name="arrow" class="arrow size-4" />
         </a>
       </div>
     </div>
 
-    {testimonials.isPlaceholder && <DraftNote class="mt-8" />}
+    {testimonials.items.some((t) => hasPlaceholder(t.quote, t.name, t.source)) && <DraftNote class="mt-8" />}
 
     <!-- Masonry: reviews of different lengths pack neatly into 2 columns -->
     <ul class="mt-10 gap-5 md:columns-2 lg:mt-14">
@@ -28,17 +29,17 @@ const { testimonials } = site;
         testimonials.items.map((item, i) => (
           <li class="mb-5 break-inside-avoid" data-reveal style={`--reveal-delay: ${(i % 2) * 100}ms`}>
             <figure class="card card-hover flex w-full flex-col p-7 sm:p-8">
-              <Icon name="quote" class="size-7 text-gold/80" strokeWidth={1.25} />
+              <Icon name="quote" class="size-7 text-tan/80" strokeWidth={1.25} />
               <blockquote class="mt-5 font-serif text-[1.35rem] leading-snug text-cream italic">
                 <p>{item.quote}</p>
               </blockquote>
               <figcaption class="mt-7 flex items-center gap-3 border-t border-line pt-5">
-                <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-gold" aria-hidden="true">
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-tan" aria-hidden="true">
                   <Icon name="facebook" class="size-4" />
                 </span>
                 <span>
                   <span class="block font-medium text-cream">{item.name}</span>
-                  <span class="mt-0.5 block text-xs tracking-[0.18em] text-gold uppercase">{item.source}</span>
+                  <span class="mt-0.5 block text-xs tracking-[0.18em] text-tan uppercase">{item.source}</span>
                 </span>
               </figcaption>
             </figure>

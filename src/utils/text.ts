@@ -5,7 +5,7 @@ export interface TextPart {
 
 /**
  * Splits "Hello *world*" into [{ text: 'Hello ', em: false }, { text: 'world', em: true }]
- * so headlines can show some words in gold italics.
+ * so headlines can show some words in tan italics.
  */
 export function splitEmphasis(input: string): TextPart[] {
   return input
@@ -26,4 +26,9 @@ export function stripEmphasis(input: string): string {
 /** True for values like "[Instagram link]" that haven't been filled in yet. */
 export function isPlaceholder(value: string): boolean {
   return /^\[[^\]]*\]$/.test(value.trim());
+}
+
+/** True if any of the texts still contains a [placeholder] somewhere. */
+export function hasPlaceholder(...texts: string[]): boolean {
+  return texts.some((text) => /\[[^\]]*\]/.test(text));
 }

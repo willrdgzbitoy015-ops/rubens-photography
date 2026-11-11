@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import Photo from './ui/Photo.astro';
+import BookButton from './ui/BookButton.astro';
 import { splitEmphasis } from '../utils/text';
 
 const { hero } = site;
@@ -33,16 +34,14 @@ const headline = splitEmphasis(hero.headline);
         class="hero-in mt-6 text-[clamp(2.9rem,12.5vw,6.5rem)] leading-[0.98] text-cream"
         style="--delay: 120ms"
       >
-        {headline.map((part) => (part.em ? <em class="text-gold">{part.text}</em> : part.text))}
+        {headline.map((part) => (part.em ? <em class="text-tan">{part.text}</em> : part.text))}
       </h1>
       <p class="hero-in mt-6 max-w-xl text-base text-cream/85 sm:text-lg" style="--delay: 240ms">
         {hero.tagline}
       </p>
       <div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4" style="--delay: 360ms">
-        <a href={hero.primaryCta.href} class="btn btn-gold">{hero.primaryCta.label}</a>
-        <a href={hero.secondaryCta.href} target="_blank" rel="noopener" class="btn btn-outline">
-          {hero.secondaryCta.label}<span class="sr-only"> (opens in a new tab)</span>
-        </a>
+        <a href={hero.primaryCta.href} class="btn btn-tan">{hero.primaryCta.label}</a>
+        <BookButton label={hero.bookCta} variant="outline" />
       </div>
     </div>
   </div>

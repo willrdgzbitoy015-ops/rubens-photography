@@ -1,0 +1,102 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import PhotoPlaceholder from './PhotoPlaceholder.astro';
+import { getPhoto, fitWidths } from '../../utils/photos';
+
+/**
+ * A photo that opens full size in the PhotoSwipe lightbox when tapped.
+ * Must sit inside an element with `data-gallery` (see src/scripts/gallery.ts).
+ * Shows a placeholder box (that also opens in the lightbox) until the file exists.
+ */
+interface Props {
+  /** Path relative to src/assets/photos/ */
+  file: string;
+  alt: string;
+  /** Text on the placeholder box */
+  placeholder: string;
+  /** Thumbnail widths to generate */
+  widths: number[];
+  /** How wide the thumbnail is shown at each screen size (HTML `sizes`) */
+  sizes: string;
+  /** Placeholder box shape, e.g. "4 / 5" (ignored with `fill`) */
+  ratio?: string;
+  /** Fill the parent box with a cropped thumbnail. Parent must be position: relative with a size. */
+  fill?: boolean;
+  /** Small placeholder label without the file path (for tiny thumbnails) */
+  compact?: boolean;
+  /** Corner rounding class */
+  radius?: string;
+  class?: string;
+}
+
+const {
+  file,
+  alt,
+  placeholder,
+  widths,
+  sizes,
+  ratio,
+  fill = false,
+  compact = false,
+  radius = 'rounded-photo',
+  class: className,
+} = Astro.props;
+
+const image = getPhoto(file);
+
+// Large version for the lightbox (max 2400px wide, with smaller options for phones)
+const full = image
+  ? await getImage({
+      src: image,
+      width: Math.min(image.width, 2400),
+      widths: fitWidths(image, [960, 1600, 2400]),
+      format: 'webp',
+    })
+  : undefined;
+
+const triggerClass = [
+  'group block overflow-hidden',
+  radius,
+  fill ? 'absolute inset-0 h-full w-full' : 'relative w-full',
+  className,
+];
+---
+
+{
+  image && full ? (
+    <a
+      href={full.src}
+      class:list={triggerClass}
+      data-gallery-open
+      data-pswp-src={full.src}
+      data-pswp-srcset={full.srcSet.attribute}
+      data-pswp-width={full.attributes.width}
+      data-pswp-height={full.attributes.height}
+      aria-haspopup="dialog"
+    >
+      <Picture
+        src={image}
+        alt={alt}
+        widths={fitWidths(image, widths)}
+        sizes={sizes}
+        formats={['avif', 'webp']}
+        loading="lazy"
+        class:list={['zoom-img', fill ? 'absolute inset-0 h-full w-full object-cover' : 'block h-auto w-full']}
+      />
+      <slot />
+    </a>
+  ) : (
+    <button type="button" class:list={[triggerClass, 'text-left']} data-gallery-open data-placeholder-label={placeholder} aria-haspopup="dialog">
+      <PhotoPlaceholder
+        label={placeholder}
+        file={compact ? undefined : file}
+        ratio={ratio}
+        fill={fill}
+        compact={compact}
+        rounded={false}
+        class="zoom-img"
+      />
+      <slot />
+    </button>
+  )
+}

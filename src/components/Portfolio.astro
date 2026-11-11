@@ -1,9 +1,7 @@
 ---
-import { Picture, getImage } from 'astro:assets';
 import { site, type Orientation } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
-import PhotoPlaceholder from './ui/PhotoPlaceholder.astro';
-import { getPhoto, fitWidths } from '../utils/photos';
+import LightboxPhoto from './ui/LightboxPhoto.astro';
 
 const { portfolio } = site;
 
@@ -12,27 +10,8 @@ const categoryLabel = (value: string) => portfolio.filters.find((f) => f.value =
 
 // Thumbnails: 1 column on phones, 2 on tablets, 3 on desktop.
 const thumbSizes =
-  '(min-width: 1200px) 368px, (min-width: 1024px) calc((100vw - 6rem) / 3), (min-width: 640px) calc((100vw - 5rem) / 2), calc(100vw - 2.5rem)';
+  '(min-width: 1200px) 368px, (min-width: 1024px) calc((100vw - 6.5rem) / 3), (min-width: 640px) calc((100vw - 5.25rem) / 2), calc(100vw - 2.5rem)';
 const thumbWidths = [360, 540, 720, 1080];
-
-const items = await Promise.all(
-  portfolio.items.map(async (item, i) => {
-    const image = getPhoto(item.file);
-    const number = String(i + 1).padStart(2, '0');
-    const placeholder = `${categoryLabel(item.category)} photo ${number} — ${item.orientation}`;
-    if (!image) return { ...item, image, placeholder, full: undefined };
-
-    // Large version for the lightbox (max 2400px wide, with smaller options for phones)
-    const fullWidth = Math.min(image.width, 2400);
-    const full = await getImage({
-      src: image,
-      width: fullWidth,
-      widths: fitWidths(image, [960, 1600, 2400]),
-      format: 'webp',
-    });
-    return { ...item, image, placeholder, full };
-  }),
-);
 ---
 
 <section id="portfolio" aria-labelledby="portfolio-title" class="section" data-gallery>
@@ -45,7 +24,7 @@ const items = await Promise.all(
           portfolio.filters.map((filter, i) => (
             <button
               type="button"
-              class="min-h-11 rounded-full border border-line px-5 text-[0.8125rem] font-medium tracking-[0.12em] text-cream uppercase transition-colors hover:not-aria-pressed:border-gold hover:not-aria-pressed:text-gold aria-pressed:border-gold aria-pressed:bg-gold aria-pressed:text-ink"
+              class="min-h-11 rounded-full border border-line px-5 text-[0.8125rem] font-medium tracking-[0.12em] text-cream uppercase transition-colors hover:not-aria-pressed:border-tan hover:not-aria-pressed:text-tan aria-pressed:border-tan aria-pressed:bg-tan aria-pressed:text-ink"
               aria-pressed={i === 0 ? 'true' : 'false'}
               data-filter={filter.value}
             >
@@ -60,46 +39,23 @@ const items = await Promise.all(
 
     <ul class="mt-10 columns-1 gap-4 sm:columns-2 sm:gap-5 lg:mt-14 lg:columns-3">
       {
-        items.map((item) => (
+        portfolio.items.map((item, i) => (
           <li class="mb-4 break-inside-avoid sm:mb-5" data-gallery-item data-category={item.category} data-reveal>
-            {item.image && item.full ? (
-              <a
-                href={item.full.src}
-                class="group relative block overflow-hidden rounded-photo"
-                data-gallery-open
-                data-pswp-src={item.full.src}
-                data-pswp-srcset={item.full.srcSet.attribute}
-                data-pswp-width={item.full.attributes.width}
-                data-pswp-height={item.full.attributes.height}
-                aria-haspopup="dialog"
+            <LightboxPhoto
+              file={item.file}
+              alt={item.alt}
+              placeholder={`${categoryLabel(item.category)} photo ${String(i + 1).padStart(2, '0')} — ${item.orientation}`}
+              ratio={ratios[item.orientation]}
+              widths={thumbWidths}
+              sizes={thumbSizes}
+            >
+              <span
+                class="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-ink/80 to-transparent px-5 pt-12 pb-4 text-xs font-medium tracking-[0.2em] text-cream uppercase opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
+                aria-hidden="true"
               >
-                <Picture
-                  src={item.image}
-                  alt={item.alt}
-                  widths={fitWidths(item.image, thumbWidths)}
-                  sizes={thumbSizes}
-                  formats={['avif', 'webp']}
-                  loading="lazy"
-                  class="zoom-img block h-auto w-full"
-                />
-                <span
-                  class="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-ink/80 to-transparent px-5 pt-12 pb-4 text-xs font-medium tracking-[0.2em] text-cream uppercase opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
-                  aria-hidden="true"
-                >
-                  {categoryLabel(item.category)}
-                </span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                class="group block w-full overflow-hidden rounded-photo text-left"
-                data-gallery-open
-                data-placeholder-label={item.placeholder}
-                aria-haspopup="dialog"
-              >
-                <PhotoPlaceholder label={item.placeholder} file={item.file} ratio={ratios[item.orientation]} class="zoom-img" />
-              </button>
-            )}
+                {categoryLabel(item.category)}
+              </span>
+            </LightboxPhoto>
           </li>
         ))
       }

@@ -2,6 +2,7 @@
 import { site } from '../data/site';
 import Brand from './ui/Brand.astro';
 import Icon from './ui/Icon.astro';
+import BookButton from './ui/BookButton.astro';
 ---
 
 <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50 border-b border-transparent">
@@ -11,7 +12,7 @@ import Icon from './ui/Icon.astro';
     </a>
 
     <nav aria-label="Main" class="hidden lg:block">
-      <ul class="flex items-center gap-7 xl:gap-9">
+      <ul class="flex items-center gap-5 xl:gap-8">
         {
           site.nav.map((link) => (
             <li>
@@ -25,9 +26,7 @@ import Icon from './ui/Icon.astro';
     </nav>
 
     <div class="flex items-center gap-2">
-      <a href={site.navCta.href} target="_blank" rel="noopener" class="btn btn-gold hidden min-h-11 px-5 lg:inline-flex">
-        {site.navCta.label}<span class="sr-only"> (opens in a new tab)</span>
-      </a>
+      <BookButton label={site.navCta} class="hidden min-h-11 px-5 lg:inline-flex" />
       <button
         type="button"
         class="-mr-2.5 inline-flex size-11 items-center justify-center rounded-full text-cream lg:hidden"
@@ -50,7 +49,7 @@ import Icon from './ui/Icon.astro';
         site.nav.map((link, i) => (
           <li class="border-b border-line/70">
             <a href={link.href} class="flex min-h-14 items-baseline gap-4 py-3 font-serif text-[2.1rem] leading-tight text-cream">
-              <span class="font-sans text-xs tracking-[0.2em] text-gold" aria-hidden="true">
+              <span class="font-sans text-xs tracking-[0.2em] text-tan" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
               {link.label}
@@ -62,17 +61,14 @@ import Icon from './ui/Icon.astro';
   </nav>
 
   <div class="shell mt-10 flex flex-col gap-6">
-    <a href={site.navCta.href} target="_blank" rel="noopener" class="btn btn-gold w-full">
-      <Icon name="messenger" class="size-5" />
-      {site.navCta.label}<span class="sr-only"> (opens in a new tab)</span>
-    </a>
+    <BookButton label={site.navCta} icon class="w-full" />
     <div class="flex flex-col gap-1 text-muted">
       <a href={site.contact.phoneHref} class="inline-flex min-h-11 items-center gap-3">
-        <Icon name="phone" class="size-4 text-gold" />
+        <Icon name="phone" class="size-4 text-tan" />
         {site.contact.phoneDisplay}
       </a>
       <a href={`mailto:${site.contact.email}`} class="inline-flex min-h-11 items-center gap-3 break-all">
-        <Icon name="mail" class="size-4 text-gold" />
+        <Icon name="mail" class="size-4 text-tan" />
         {site.contact.email}
       </a>
     </div>

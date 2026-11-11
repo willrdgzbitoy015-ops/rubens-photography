@@ -11,13 +11,13 @@ const { process } = site;
 
     <div class="relative mt-12 lg:mt-16">
     <!-- Connecting line on desktop -->
-    <span class="absolute top-7 right-[12%] left-7 hidden h-px bg-linear-to-r from-gold/60 via-line to-line lg:block" aria-hidden="true"></span>
+    <span class="absolute top-7 right-[12%] left-7 hidden h-px bg-linear-to-r from-tan/60 via-line to-line lg:block" aria-hidden="true"></span>
     <ol class="relative grid gap-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4">
       {
         process.steps.map((step, i) => (
           <li class="relative flex gap-5 sm:flex-col sm:gap-6" data-reveal style={`--reveal-delay: ${i * 100}ms`}>
             <span
-              class="relative flex size-14 shrink-0 items-center justify-center rounded-full border border-gold/60 bg-ink font-serif text-xl text-gold italic"
+              class="relative flex size-14 shrink-0 items-center justify-center rounded-full border border-tan/60 bg-ink font-serif text-xl text-tan italic"
               aria-hidden="true"
             >
               {String(i + 1).padStart(2, '0')}

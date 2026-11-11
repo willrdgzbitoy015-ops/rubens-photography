@@ -1,0 +1,37 @@
+---
+import { site } from '../../data/site';
+import Icon from './Icon.astro';
+
+/**
+ * Every "book" action on the site: opens Ruben's Messenger (or his Facebook
+ * Page while the Messenger link is still a placeholder) in a new tab.
+ */
+interface Props {
+  /** Visible text, e.g. "Book Now" */
+  label: string;
+  variant?: 'tan' | 'outline';
+  /** Show the Messenger icon before the text */
+  icon?: boolean;
+  /** Extra words for screen readers when several buttons share a label, e.g. a package name */
+  context?: string;
+  class?: string;
+}
+
+const { label, variant = 'tan', icon = false, context, class: className } = Astro.props;
+
+// The accessible name starts with the visible text (so voice control works),
+// then says where the link goes and that it opens a new tab.
+const destination = /messenger|message/i.test(label) ? '' : `: message ${site.photographer} on ${site.bookingVia}`;
+const ariaLabel = `${label}${context ? ` (${context})` : ''}${destination} (opens in new tab)`;
+---
+
+<a
+  href={site.bookingUrl}
+  target="_blank"
+  rel="noopener"
+  aria-label={ariaLabel}
+  class:list={['btn', variant === 'tan' ? 'btn-tan' : 'btn-outline', className]}
+>
+  {icon && <Icon name="messenger" class="size-5" />}
+  {label}
+</a>

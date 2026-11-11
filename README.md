@@ -4,8 +4,8 @@ One-page showcase website for Ruben's Photography (Palompon, Leyte), built with
 [Astro](https://astro.build) and Tailwind CSS.
 
 The site advertises Ruben's work. It has **no prices, no payment details and no booking form**.
-Every "Book" button opens Ruben's **Messenger** (or the Facebook Page), so bookings and
-quotes happen in a direct conversation.
+Every "Book" button opens Ruben's **Messenger** (or the Facebook Page),
+so bookings and quotes happen in a direct conversation.
 
 ---
 
@@ -24,67 +24,83 @@ To check the final version: `npm run build`, then `npm run preview`.
 
 ---
 
-## 2. Add the photos and logo
+## 2. Edit the text: `src/data/site.ts`
 
-**Photos** go in `src/assets/photos/`. Until a photo is added, a gray box shows
-the exact file name it's waiting for.
-
-| File | Section |
-| --- | --- |
-| `hero.jpg` | Full-screen cover (horizontal, ~2400px wide) |
-| `featured/featured.jpg` | Featured shoot (horizontal, ~1600px wide) |
-| `about.jpg` | Photo of Ruben (vertical, ~1200px wide) |
-| `portfolio/debut-01.jpg` … | Portfolio, 12 photos (see `src/assets/photos/README.md`) |
-
-- Use lowercase names, JPG/PNG/WebP, about 2400px on the long side.
-- The site makes small, fast versions (AVIF + WebP) for phones automatically.
-- Update each photo's `alt` text in `src/data/site.ts` to describe the real photo.
-
-**Logo:** already set up. Ruben's logo is in `src/assets/brand/`: the "R" mark
-shows in the navbar and the full logo in the footer. See
-`src/assets/brand/README.md` for what each file is.
-
-**Other images in `public/`:**
-
-- `og-image.jpg` is the preview picture shown when the link is shared on Facebook
-  (**1200×630**). It shows the logo mark, the name and the tagline.
-- `favicon.svg` and `apple-touch-icon.png` are the browser-tab and phone home-screen icons.
-  Both use the "R" mark.
-
----
-
-## 3. Edit the text: `src/data/site.ts`
-
-**All** text, contact details, FAQ and settings are in one file:
+**All** text, contact details, services, photos, reviews and FAQ live in one file:
 `src/data/site.ts`. You never need to touch the other files to change the wording.
 
 - Anything in **[square brackets]** is a placeholder. Replace it, brackets included.
-- In headlines, words wrapped in `*asterisks*` show in gold italics.
-- Placeholder sections show a dashed **"Placeholder text"** tag. Once you've
-  replaced the text, set the matching flag to `false` to remove the tag:
-  `storyIsPlaceholder`, `bioIsPlaceholder`, `isPlaceholder` (testimonials) and
-  `answersArePlaceholder` (FAQ).
+- While a section still has a [placeholder], it shows a small dashed
+  **"Placeholder text"** tag. The tag disappears by itself once the brackets are gone.
+- In headlines, words wrapped in `*asterisks*` show in tan italics.
+- Don't add prices, payment details or a packages section: Ruben gives every
+  client a personal quote on Messenger, since his rates vary by location.
 
 ---
 
-## 4. Connect the booking buttons to Messenger
+## 3. Add or replace photos
 
-"Book Now", "Book a Shoot" and "Message me on Messenger"
-open one link: the `messenger` link in `src/data/site.ts`.
+Photos go in **`src/assets/photos/`**, using these exact file names:
 
-1. Find the Messenger link for Ruben's Facebook Page. It's usually `https://m.me/` followed by
-   the Page's username (the part after `facebook.com/`), for example `https://m.me/rubensphotography`.
-2. Open that link on your phone. It should start a Messenger chat with the Page.
-3. Paste it into `src/data/site.ts`:
+| File | Section |
+| --- | --- |
+| `hero.jpg` | Full-screen cover at the top |
+| `featured/01.jpg` … `featured/06.jpg` | Featured shoot (01 is the big one) |
+| `portfolio/wedding-01.jpg`, `prenup-01.jpg`, `debut-01.jpg`, … | Portfolio, 12 photos |
+| `about.jpg` | Photo of Ruben in the About section (vertical) |
+
+The full list is in `src/assets/photos/README.md`. Until a file is there, a gray box
+shows the exact name it's waiting for, so the site always works.
+
+- **To replace a photo:** save the new file over the old one, with the same name.
+  If it shows something different, update its `alt` text (a short description
+  for people using screen readers) in `src/data/site.ts`.
+- **To add a portfolio photo:** put the file in `src/assets/photos/portfolio/`, then add a
+  line to `portfolio.items` in `src/data/site.ts` with its file name, category and alt text.
+- **Photo of Ruben:** save it as `src/assets/photos/about.jpg`. That's all; the gray box
+  is replaced automatically.
+- Use the original, full-quality JPGs. The site makes small, fast versions (AVIF + WebP)
+  for phones by itself when it's built.
+- If the hero photo crops out the subject on phones, change `photoFocus` in the
+  `hero` part of `src/data/site.ts` (for example `'40% 30%'`).
+
+**Facebook share picture:** `public/og-image.jpg` (1200×630) is what Facebook shows
+when someone shares the link. Right now it shows the logo. Once `hero.jpg` is in place,
+you can make it from the hero photo instead:
+
+```bash
+npm run og-image
+```
+
+---
+
+## 4. The logo
+
+Ruben's logo is already set up in `src/assets/brand/`: the "R" mark shows in the navbar
+(next to the name in text) and the full logo in the footer. To change it, replace
+`logo-mark.png` and `logo-full.png` with new transparent PNGs using the same names.
+See `src/assets/brand/README.md` for details. If those files are missing, the site
+shows the name as a text logo instead.
+
+---
+
+## 5. Connect the booking buttons to Messenger
+
+"Book Now", "Book a Shoot" and "Message me on Messenger" all open one link:
+`messenger` in `src/data/site.ts`. Until it's filled in, they open the Facebook Page instead,
+so nothing is broken in the meantime.
+
+1. On a phone, open **https://m.me/100082353385538**
+2. If it opens a Messenger chat with **Ruben's Photography**, that's the right link.
+   Paste it into `src/data/site.ts`:
    ```ts
-   messenger: 'https://m.me/your-page-username',
+   messenger: 'https://m.me/100082353385538',
    ```
-
-Until this is filled in, the buttons open the Facebook Page instead, so nothing is broken in the meantime.
+3. If it doesn't, open the Facebook Page, tap **Message**, and use that chat's link instead.
 
 ---
 
-## 5. Put it online with Netlify (free)
+## 6. Put it online with Netlify (free)
 
 1. Create a free account on [GitHub](https://github.com) and upload this folder as a new repository
    (GitHub Desktop is the easiest way).
@@ -106,7 +122,7 @@ From now on, every change you push to GitHub goes live automatically.
 
 ---
 
-## 6. Use your own domain (e.g. rubensphotography.com)
+## 7. Use your own domain (e.g. rubensphotography.com)
 
 1. Buy the domain from any registrar (Namecheap, GoDaddy, Cloudflare and so on).
 2. In Netlify, go to **Domain management → Add a domain** and type it in.
@@ -126,4 +142,5 @@ src/assets/brand/    logo
 src/data/site.ts     ALL text and settings  ← edit this
 src/components/      one file per section of the page
 src/styles/global.css colors and fonts (theme tokens at the top)
+tools/               one-off helper (npm run og-image)
 ```

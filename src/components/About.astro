@@ -4,6 +4,7 @@ import Photo from './ui/Photo.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
+import { hasPlaceholder } from '../utils/text';
 
 const { about } = site;
 ---
@@ -27,7 +28,7 @@ const { about } = site;
 
       <div class="mt-7 space-y-4 text-base text-cream/85 sm:text-lg" data-reveal style="--reveal-delay: 100ms">
         {about.bio.map((paragraph) => <p>{paragraph}</p>)}
-        {about.bioIsPlaceholder && <DraftNote />}
+        {hasPlaceholder(...about.bio) && <DraftNote />}
       </div>
 
       <dl class="mt-10 grid grid-cols-3 divide-x divide-line border-y border-line" data-reveal style="--reveal-delay: 180ms">
@@ -35,7 +36,7 @@ const { about } = site;
           about.stats.map((stat) => (
             <div class="flex flex-col-reverse gap-1.5 px-2 py-6 text-center first:pl-0 last:pr-0 sm:px-4">
               <dt class="text-[0.6875rem] leading-snug tracking-[0.12em] text-muted uppercase sm:text-xs">{stat.label}</dt>
-              <dd class="font-serif text-[clamp(1.6rem,7vw,2.75rem)] leading-none font-semibold break-words text-gold">
+              <dd class="font-serif text-[clamp(1.6rem,7vw,2.75rem)] leading-none font-semibold break-words text-tan">
                 {stat.value}
               </dd>
             </div>
@@ -44,7 +45,7 @@ const { about } = site;
       </dl>
 
       <p class="mt-8 flex items-start gap-3 text-[0.9375rem] text-muted" data-reveal style="--reveal-delay: 240ms">
-        <Icon name="pin" class="mt-0.5 size-5 text-gold" />
+        <Icon name="pin" class="mt-0.5 size-5 text-tan" />
         <span>{about.serviceArea}</span>
       </p>
     </div>
