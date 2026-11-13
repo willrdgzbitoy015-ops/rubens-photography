@@ -5,10 +5,11 @@ The box shows the exact file path it's waiting for.
 
 | File | Where it shows |
 | --- | --- |
-| `hero.jpg` | Full-screen cover at the top (horizontal, ~2400px wide) |
+| `hero.jpg` | First photo of the slideshow at the top (horizontal), and the source for `npm run og-image` |
+| `hero/slide-01.jpg`, `slide-02.jpg`, … | Dedicated slideshow photos (horizontal). List them in `hero.slides` in `src/data/site.ts` |
 | `featured/01.jpg` | Featured shoot, large photo (horizontal) |
 | `featured/02.jpg` … `featured/06.jpg` | Featured shoot, small row under it (cropped to squares; the full photo opens when tapped) |
-| `about.jpg` | About section, photo of Ruben (vertical) |
+| `about.jpg` | About section, photo of Ruben (shown as a 4:5 portrait; the sides of a square photo are trimmed) |
 | `portfolio/wedding-01.jpg` … `wedding-03.jpg` | Portfolio: Wedding |
 | `portfolio/prenup-01.jpg`, `prenup-02.jpg` | Portfolio: Prenup |
 | `portfolio/debut-01.jpg` … `debut-03.jpg` | Portfolio: Debut |
@@ -25,5 +26,8 @@ Tips:
   `src/data/site.ts`. Update it if you swap a photo for a different one.
 - To add or remove portfolio photos, edit the `portfolio.items` list in
   `src/data/site.ts`.
+- The slideshow can reuse photos from anywhere in this folder: `hero.slides` in
+  `src/data/site.ts` decides which, in what order, and which part stays visible on
+  phones (`focus`). Files that don't exist are skipped.
 - After adding or changing `hero.jpg`, run `npm run og-image` to make the
   Facebook share picture from it (see the main README).

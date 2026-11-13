@@ -25,6 +25,12 @@ interface Props {
   rounded?: boolean;
   /** Put the placeholder label at the top instead of the middle */
   placeholderAtTop?: boolean;
+  /**
+   * Fade in once loaded and in view, with a plain soft box until then
+   * (src/scripts/develop.ts). On by default,
+   * except for `priority` photos, which must show right away.
+   */
+  develop?: boolean;
   class?: string;
   style?: string;
 }
@@ -40,6 +46,7 @@ const {
   priority = false,
   rounded = true,
   placeholderAtTop = false,
+  develop = !priority,
   class: className,
   style,
 } = Astro.props;
@@ -58,6 +65,7 @@ const image = getPhoto(file);
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
       fetchpriority={priority ? 'high' : undefined}
+      data-develop={develop ? '' : undefined}
       class:list={[
         fill ? 'absolute inset-0 h-full w-full object-cover' : 'block h-auto w-full',
         rounded && 'rounded-photo',

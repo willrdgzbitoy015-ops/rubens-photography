@@ -2,9 +2,7 @@
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import LightboxPhoto from './ui/LightboxPhoto.astro';
-import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
-import { hasPlaceholder } from '../utils/text';
 
 const { featured } = site;
 const [main, ...more] = featured.photos;
@@ -34,7 +32,7 @@ const [main, ...more] = featured.photos;
         more.length > 0 && (
           <ul class="mt-2 grid grid-cols-5 gap-2 sm:mt-3 sm:gap-3" aria-label="More photos from this shoot">
             {more.map((photo) => (
-              <li class="relative aspect-square" data-gallery-item>
+              <li class="lift relative aspect-square" data-gallery-item>
                 <LightboxPhoto
                   file={photo.file}
                   alt={photo.alt}
@@ -55,8 +53,6 @@ const [main, ...more] = featured.photos;
     <div class="lg:col-span-5">
       <SectionHeading id="featured-title" eyebrow={featured.eyebrow} title={featured.title} />
       <div data-reveal style="--reveal-delay: 120ms">
-        <p class="mt-6 text-base text-cream/85 sm:text-lg">{featured.story}</p>
-        {hasPlaceholder(featured.story) && <DraftNote class="mt-4" />}
         <div class="mt-8">
           <a href={featured.link.href} class="arrow-link">
             {featured.link.label}

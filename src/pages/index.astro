@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Preloader from '../components/Preloader.astro';
 import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import Marquee from '../components/Marquee.astro';
 import FeaturedShoot from '../components/FeaturedShoot.astro';
 import Services from '../components/Services.astro';
 import Portfolio from '../components/Portfolio.astro';
+import TaglineBand from '../components/TaglineBand.astro';
 import About from '../components/About.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import Contact from '../components/Contact.astro';
@@ -15,6 +17,7 @@ import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout>
+  <Preloader />
   <Navbar />
   <main id="main" tabindex="-1" class="outline-none">
     <Hero />
@@ -22,6 +25,7 @@ import Footer from '../components/Footer.astro';
     <FeaturedShoot />
     <Services />
     <Portfolio />
+    <TaglineBand />
     <About />
     <HowItWorks />
     <Contact />
@@ -33,4 +37,6 @@ import Footer from '../components/Footer.astro';
 
 <script>
   import '../scripts/reveal.ts';
+  import '../scripts/develop.ts';
+  import '../scripts/effects.ts';
 </script>

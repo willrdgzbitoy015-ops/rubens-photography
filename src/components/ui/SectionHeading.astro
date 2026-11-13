@@ -1,9 +1,11 @@
 ---
-import { splitEmphasis } from '../../utils/text';
+import { splitWords } from '../../utils/text';
 
 /**
- * Gold eyebrow label + large serif headline. Wrap words in *asterisks*
+ * Tan eyebrow label + large serif headline. Wrap words in *asterisks*
  * to show them in tan italics, e.g. "What I *photograph*".
+ * When the heading scrolls into view, each word rises out of its own line
+ * (styles: "Headings: each word rises" in global.css).
  */
 interface Props {
   /** id of the heading — the section uses it in aria-labelledby */
@@ -16,13 +18,24 @@ interface Props {
 }
 
 const { id, eyebrow, title, intro, align = 'left', class: className } = Astro.props;
-const parts = splitEmphasis(title);
+const words = splitWords(title);
 ---
 
-<div class:list={['max-w-2xl', align === 'center' && 'mx-auto text-center', className]} data-reveal>
+<div class:list={['section-heading max-w-2xl', align === 'center' && 'mx-auto text-center', className]} data-reveal>
   <p class:list={['eyebrow', align === 'center' && 'justify-center']}>{eyebrow}</p>
   <h2 id={id} class="mt-5 text-[2.6rem] sm:text-5xl lg:text-[3.75rem]">
-    {parts.map((part) => (part.em ? <em class="text-tan">{part.text}</em> : part.text))}
+    {
+      words.map((word, i) => (
+        <>
+          {i > 0 && ' '}
+          <span class="split-word">
+            <span class="split-word-inner" style={`--wi: ${i}`}>
+              {word.map((piece) => (piece.em ? <em class="text-tan">{piece.text}</em> : piece.text))}
+            </span>
+          </span>
+        </>
+      ))
+    }
   </h2>
   {intro && <p class="mt-5 text-base text-muted sm:text-lg">{intro}</p>}
   <slot />

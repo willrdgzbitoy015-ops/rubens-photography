@@ -1,6 +1,7 @@
 ---
 import { Picture, getImage } from 'astro:assets';
 import PhotoPlaceholder from './PhotoPlaceholder.astro';
+import Icon from './Icon.astro';
 import { getPhoto, fitWidths } from '../../utils/photos';
 
 /**
@@ -55,7 +56,7 @@ const full = image
   : undefined;
 
 const triggerClass = [
-  'group block overflow-hidden',
+  'photo-trigger group block overflow-hidden',
   radius,
   fill ? 'absolute inset-0 h-full w-full' : 'relative w-full',
   className,
@@ -81,9 +82,15 @@ const triggerClass = [
         sizes={sizes}
         formats={['avif', 'webp']}
         loading="lazy"
+        data-develop
         class:list={['zoom-img', fill ? 'absolute inset-0 h-full w-full object-cover' : 'block h-auto w-full']}
       />
       <slot />
+      {!compact && (
+        <span class="photo-expand" aria-hidden="true">
+          <Icon name="expand" class="size-4" />
+        </span>
+      )}
     </a>
   ) : (
     <button type="button" class:list={[triggerClass, 'text-left']} data-gallery-open data-placeholder-label={placeholder} aria-haspopup="dialog">

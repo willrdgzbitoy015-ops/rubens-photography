@@ -4,7 +4,13 @@
    Change colors and fonts here; Tailwind turns each token into utilities
    (e.g. --color-tan → bg-tan, text-tan, border-tan).
    The palette comes from Ruben's logo: tan #a87c4f and dark brown #3d2314
-   (src/assets/brand/logo.png). The page background is a darker shade of that brown. */
+   (src/assets/brand/logo.png).
+
+   There are two color themes with the same token names: DARK (below) and
+   LIGHT (white background, further down). site.ts → theme.default picks the
+   one visitors see first; the sun/moon button in the navbar switches.
+   The names come from the dark design: "ink" is always the PAGE BACKGROUND
+   and "cream" is always the MAIN TEXT color, even in the light theme. */
 @theme {
   --color-ink: #1a110b;          /* page background: deep espresso brown */
   --color-surface: #23170f;      /* cards */
@@ -15,6 +21,8 @@
   --color-tan: #a87c4f;          /* the one accent: the logo's tan */
   --color-tan-bright: #c29466;   /* tan hover state */
   --color-placeholder: #2b1e15;  /* "photo goes here" boxes */
+  --color-paper: #f2ede4;        /* light card behind the logo — the same in both themes */
+  --color-shine: #f2ede4;        /* the light that sweeps across the Baybayin lettering */
 
   --font-serif: "Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -22,6 +30,50 @@
   --radius-photo: 14px;
 
   --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-shutter: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+:root {
+  --shadow-photo: 0 30px 60px -35px rgb(0 0 0 / 0.8);
+  --shadow-card: 0 20px 50px -30px rgb(0 0 0 / 0.8);
+  --grain-opacity: 0.07;
+}
+
+/* ─── LIGHT theme: white background ─────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-ink: #faf7f2;          /* page background: warm white */
+  --color-surface: #ffffff;      /* cards: pure white */
+  --color-surface-2: #f3ece2;    /* raised cards */
+  --color-line: #e6dbcc;         /* borders, dividers */
+  --color-cream: #2a1b11;        /* main text: near-black brown */
+  --color-muted: #6f5d4d;        /* secondary text */
+  --color-tan: #8f6539;          /* the logo's tan, one shade darker so tan text stays readable on white */
+  --color-tan-bright: #74502c;   /* tan hover state (darker on white) */
+  --color-placeholder: #eee6da;
+  --color-shine: #f6e2c8;
+  --shadow-photo: 0 30px 60px -32px rgb(61 35 20 / 0.45);
+  --shadow-card: 0 18px 40px -26px rgb(61 35 20 / 0.35);
+}
+
+/* Places that stay DARK in both themes: the hero (light text over a photo),
+   the photo viewer, the loading screen, and the navbar while it floats over
+   the hero. Keep these values the same as the @theme block above. */
+.theme-dark,
+html .pswp,
+:root[data-theme="light"]:not(.menu-open) .site-header:not([data-scrolled]) {
+  color-scheme: dark;
+  color: var(--color-cream);
+  --color-ink: #1a110b;
+  --color-surface: #23170f;
+  --color-surface-2: #2d1f15;
+  --color-line: #452a19;
+  --color-cream: #f2ede4;
+  --color-muted: #b9a793;
+  --color-tan: #a87c4f;
+  --color-tan-bright: #c29466;
+  --color-placeholder: #2b1e15;
+  --color-shine: #f2ede4;
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────── */
@@ -132,10 +184,20 @@
     height: 1px;
     background: currentColor;
     flex: none;
+    transition: width 0.5s var(--ease-soft);
+  }
+  /* The little line before a section label grows when the heading is hovered */
+  @media (hover: hover) {
+    .section-heading:hover .eyebrow::before {
+      width: 3rem;
+    }
   }
 
   /* Buttons — all at least 48px tall for easy tapping */
   .btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -157,6 +219,7 @@
       border-color 0.25s var(--ease-soft),
       color 0.25s var(--ease-soft),
       transform 0.25s var(--ease-soft),
+      translate 0.4s var(--ease-soft), /* the "magnetic" pull toward the mouse (src/scripts/effects.ts) */
       box-shadow 0.25s var(--ease-soft);
   }
   .btn:disabled {
@@ -175,19 +238,50 @@
     background-color: color-mix(in srgb, var(--color-ink) 15%, transparent);
   }
 
+  /* A band of light sweeps across the button on hover */
+  .btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, color-mix(in srgb, white 34%, transparent) 50%, transparent 70%);
+    transform: translateX(-110%);
+    pointer-events: none;
+  }
+  .btn-outline::after {
+    background: linear-gradient(105deg, transparent 30%, color-mix(in srgb, var(--color-tan) 28%, transparent) 50%, transparent 70%);
+  }
+  .btn .btn-arrow {
+    transition: transform 0.3s var(--ease-soft);
+  }
+
   @media (hover: hover) {
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+    .btn:hover::after {
+      transform: translateX(110%);
+      transition: transform 0.85s var(--ease-soft);
+    }
+    .btn:hover .btn-arrow {
+      transform: translateX(4px);
+    }
     .btn-tan:hover:not(:disabled) {
       background-color: var(--color-tan-bright);
-      box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--color-tan) 60%, transparent);
+      box-shadow: 0 14px 34px -12px color-mix(in srgb, var(--color-tan) 70%, transparent);
     }
     .btn-outline:hover {
       border-color: var(--color-tan);
       color: var(--color-tan);
     }
   }
+  .btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
 
   /* Cards with a subtle lift + tan border glow on hover */
   .card {
+    position: relative;
+    isolation: isolate;
     border: 1px solid var(--color-line);
     background-color: var(--color-surface);
     border-radius: 1rem;
@@ -196,21 +290,116 @@
       border-color 0.4s var(--ease-soft),
       box-shadow 0.4s var(--ease-soft);
   }
+  /* Soft tan light that follows the mouse (position set by src/scripts/spotlight.ts) */
+  .card-hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      22rem circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in srgb, var(--color-tan) 14%, transparent),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-soft);
+    pointer-events: none;
+  }
   @media (hover: hover) {
     .card-hover:hover {
       transform: translateY(-4px);
       border-color: color-mix(in srgb, var(--color-tan) 45%, transparent);
       box-shadow: 0 24px 50px -30px color-mix(in srgb, var(--color-tan) 35%, transparent);
     }
+    .card-hover:hover::before {
+      opacity: 1;
+    }
   }
 
-  /* Gentle image zoom on hover (only on devices with a mouse) */
+  /* Round icon badge inside a card: fills with tan when the card is hovered */
+  .icon-badge {
+    transition:
+      background-color 0.35s var(--ease-soft),
+      border-color 0.35s var(--ease-soft),
+      color 0.35s var(--ease-soft),
+      transform 0.45s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .card-hover:hover .icon-badge {
+      background-color: var(--color-tan);
+      border-color: var(--color-tan);
+      color: var(--color-ink);
+      transform: scale(1.08) rotate(-6deg);
+    }
+  }
+
+  /* Gentle image zoom + a touch more light on hover (only on devices with a mouse) */
   .zoom-img {
-    transition: transform 0.9s var(--ease-soft);
+    transition:
+      transform 0.9s var(--ease-soft),
+      filter 0.9s var(--ease-soft);
   }
   @media (hover: hover) {
     .group:hover .zoom-img {
-      transform: scale(1.04);
+      transform: scale(1.05);
+      filter: brightness(1.06) saturate(1.06);
+    }
+  }
+
+  /* Photos that open in the lightbox: tan inner ring + an "expand" icon on hover */
+  .photo-trigger::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: box-shadow 0.5s var(--ease-soft);
+    pointer-events: none;
+  }
+  .photo-expand {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-cream) 30%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: var(--color-cream);
+    opacity: 0;
+    transform: scale(0.6) rotate(-45deg);
+    transition:
+      opacity 0.4s var(--ease-soft),
+      transform 0.5s var(--ease-soft);
+    pointer-events: none;
+  }
+  .photo-trigger:focus-visible .photo-expand {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: hover) {
+    .photo-trigger:hover::after {
+      box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--color-tan) 75%, transparent);
+    }
+    .photo-trigger:hover .photo-expand {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Small photos that rise a little on hover */
+  .lift {
+    transition: transform 0.45s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-4px);
     }
   }
 
@@ -240,21 +429,6 @@
     .arrow-link:hover .arrow {
       transform: translateX(4px);
     }
-  }
-
-  /* Small dashed tag that marks placeholder text */
-  .draft-note {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.7rem;
-    border: 1px dashed color-mix(in srgb, var(--color-tan) 60%, transparent);
-    border-radius: 999px;
-    color: var(--color-tan);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   /* Gray "photo goes here" box */
@@ -411,12 +585,82 @@
     opacity: 0;
   }
 }
+/* The menu links slide in one after another */
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu:not([hidden]) .menu-item {
+    animation: menu-item-in 0.6s var(--ease-soft) both;
+    animation-delay: calc(80ms + var(--i, 0) * 55ms);
+  }
+}
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
 
 /* ─── Hero ──────────────────────────────────────────────────────────────── */
+/* Phones: the text covers the middle and bottom of the photo, so shade those
+   enough for bright photos (daylight, white décor) too. */
 .hero-overlay {
   background:
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 70%, transparent) 0%, color-mix(in srgb, var(--color-ink) 0%, transparent) 22%),
-    linear-gradient(to top, color-mix(in srgb, var(--color-ink) 97%, transparent) 0%, color-mix(in srgb, var(--color-ink) 75%, transparent) 35%, color-mix(in srgb, var(--color-ink) 20%, transparent) 70%, color-mix(in srgb, var(--color-ink) 35%, transparent) 100%);
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 70%, transparent) 0%, color-mix(in srgb, var(--color-ink) 0%, transparent) 20%),
+    linear-gradient(to top, color-mix(in srgb, var(--color-ink) 97%, transparent) 0%, color-mix(in srgb, var(--color-ink) 82%, transparent) 35%, color-mix(in srgb, var(--color-ink) 55%, transparent) 62%, color-mix(in srgb, var(--color-ink) 30%, transparent) 85%, color-mix(in srgb, var(--color-ink) 40%, transparent) 100%);
+}
+/* On wider screens the text sits on the left: shade that side too, so the
+   headline stays readable on bright photos (church interiors, daylight). */
+@media (width >= 40rem) {
+  .hero-overlay {
+    background:
+      linear-gradient(to right, color-mix(in srgb, var(--color-ink) 62%, transparent) 0%, color-mix(in srgb, var(--color-ink) 30%, transparent) 38%, transparent 62%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 70%, transparent) 0%, color-mix(in srgb, var(--color-ink) 0%, transparent) 22%),
+      linear-gradient(to top, color-mix(in srgb, var(--color-ink) 97%, transparent) 0%, color-mix(in srgb, var(--color-ink) 75%, transparent) 35%, color-mix(in srgb, var(--color-ink) 20%, transparent) 70%, color-mix(in srgb, var(--color-ink) 35%, transparent) 100%);
+  }
+}
+
+.hero-eyebrow {
+  color: var(--color-tan-bright);
+  text-shadow: 0 1px 14px color-mix(in srgb, var(--color-ink) 90%, transparent);
+}
+.hero-title {
+  text-shadow: 0 2px 32px color-mix(in srgb, var(--color-ink) 45%, transparent);
+}
+
+/* Slideshow: the new photo fades in on top of the old one (no dark dip) */
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-soft); /* keep in sync with FADE_MS in slideshow.ts */
+}
+.hero-slide[data-active] {
+  z-index: 2;
+  opacity: 1;
+}
+.hero-slide[data-prev] {
+  z-index: 1;
+  opacity: 1;
+}
+.hero-slide img {
+  transform-origin: var(--focus, center);
+}
+/* Slow zoom-out on the photo on screen ("Ken Burns"). When it ends,
+   src/scripts/slideshow.ts fades in the next photo, so this also sets the pace. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slide:is([data-active], [data-prev]) img {
+    animation: ken-burns var(--slide-duration, 7s) linear both;
+  }
+}
+@keyframes ken-burns {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Paused while the hero is out of view or the tab is hidden */
+[data-slideshow]:is([data-offscreen], [data-tab-hidden]) .hero-slide img {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -433,42 +677,6 @@
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* Animated "Scroll" cue */
-.scroll-cue-line {
-  position: relative;
-  display: block;
-  width: 1px;
-  height: 3rem;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--color-cream) 25%, transparent);
-}
-.scroll-cue-line::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--color-tan);
-  transform-origin: top;
-  animation: scroll-cue 2.4s var(--ease-soft) infinite;
-}
-@keyframes scroll-cue {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  45% {
-    transform: scaleY(1);
-    transform-origin: top;
-  }
-  55% {
-    transform: scaleY(1);
-    transform-origin: bottom;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
   }
 }
 
@@ -491,6 +699,192 @@
     transform: translateX(-50%);
   }
 }
+.marquee-word {
+  transition: color 0.3s var(--ease-soft);
+}
+.marquee-star {
+  transition: transform 0.6s var(--ease-soft);
+}
+@media (hover: hover) {
+  .marquee li:hover .marquee-word {
+    color: var(--color-tan);
+  }
+  .marquee li:hover .marquee-star {
+    transform: rotate(180deg) scale(1.5);
+  }
+}
+
+/* ─── Hover details, section by section ─────────────────────────────────── */
+
+/* Navbar logo badge tilts; footer logo card lifts */
+.brand-badge,
+.brand-card {
+  transition: transform 0.5s var(--ease-soft);
+}
+.brand-card {
+  box-shadow: var(--shadow-card);
+}
+/* On the white background the logo's cream cards need an edge */
+:root[data-theme="light"] :is(.brand-card, .site-header[data-scrolled] .brand-badge) {
+  box-shadow:
+    inset 0 0 0 1px var(--color-line),
+    var(--shadow-card);
+}
+@media (hover: hover) {
+  a:hover .brand-badge {
+    transform: rotate(-10deg) scale(1.06);
+  }
+  a:hover .brand-card {
+    transform: translateY(-4px) rotate(-1.5deg);
+  }
+}
+
+/* Services: photo on top; on hover the photo zooms and a tan line draws along the bottom edge */
+.service-card {
+  overflow: hidden;
+}
+.service-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-tan), var(--color-tan-bright) 60%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-soft);
+}
+@media (hover: hover) {
+  .service-card:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* How it works: the step number fills with tan */
+.step-num {
+  transition:
+    background-color 0.4s var(--ease-soft),
+    border-color 0.4s var(--ease-soft),
+    color 0.4s var(--ease-soft),
+    transform 0.5s var(--ease-soft),
+    box-shadow 0.5s var(--ease-soft);
+}
+.step-title {
+  transition: color 0.4s var(--ease-soft);
+}
+@media (hover: hover) {
+  .step:hover .step-num {
+    background-color: var(--color-tan);
+    border-color: var(--color-tan);
+    color: var(--color-ink);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-tan) 14%, transparent);
+  }
+  .step:hover .step-title {
+    color: var(--color-tan);
+  }
+}
+
+/* Testimonials: the quote mark tips up */
+.quote-icon {
+  transform-origin: left bottom;
+  transition:
+    transform 0.5s var(--ease-soft),
+    color 0.4s var(--ease-soft);
+}
+@media (hover: hover) {
+  .card-hover:hover .quote-icon {
+    transform: rotate(-8deg) scale(1.15);
+    color: var(--color-tan-bright);
+  }
+}
+
+/* FAQ: the + circle warms up when a question is hovered */
+.faq-badge {
+  transition:
+    border-color 0.3s var(--ease-soft),
+    background-color 0.3s var(--ease-soft);
+}
+@media (hover: hover) {
+  .faq-item summary:hover .faq-badge {
+    border-color: var(--color-tan);
+    background-color: color-mix(in srgb, var(--color-tan) 12%, transparent);
+  }
+}
+
+/* ─── Tagline band: Baybayin lettering from the logo ────────────────────── */
+/* The lettering is a mask, so its color comes from the background below:
+   tan, with a cream band of light that sweeps across. */
+.baybayin {
+  display: block;
+  background: linear-gradient(100deg, var(--color-tan) 40%, var(--color-cream) 50%, var(--color-tan) 60%);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-mask: var(--baybayin) center / contain no-repeat;
+  mask: var(--baybayin) center / contain no-repeat;
+  transition: background-position 1.3s var(--ease-soft);
+}
+@supports not ((mask: none) or (-webkit-mask: none)) {
+  .baybayin {
+    display: none;
+  }
+}
+/* One sweep when it scrolls into view (for phones, which can't hover)… */
+@media (prefers-reduced-motion: no-preference) {
+  .is-visible .baybayin {
+    animation: baybayin-shine 2.2s 1.7s var(--ease-soft); /* after the writing wipe */
+  }
+}
+@keyframes baybayin-shine {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+/* …and again on every hover */
+@media (hover: hover) {
+  .group:hover .baybayin {
+    background-position: 0 0;
+  }
+}
+
+/* ─── About: Ruben's photo ──────────────────────────────────────────────── */
+.about-frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--color-tan) 45%, transparent);
+  border-radius: var(--radius-photo);
+  transform: translate(0.875rem, 0.875rem);
+  transition:
+    transform 0.7s var(--ease-soft),
+    border-color 0.7s var(--ease-soft);
+}
+.about-photo-inner {
+  box-shadow: var(--shadow-photo);
+  transition: transform 0.7s var(--ease-soft);
+}
+
+/* Stats: the number rises */
+.stat dd {
+  transition:
+    transform 0.5s var(--ease-soft),
+    color 0.4s var(--ease-soft);
+}
+
+@media (hover: hover) {
+  .about-photo:hover .about-frame {
+    transform: translate(1.375rem, 1.375rem);
+    border-color: var(--color-tan);
+  }
+  .about-photo:hover .about-photo-inner {
+    transform: translate(-0.25rem, -0.25rem);
+  }
+  .stat:hover dd {
+    transform: translateY(-4px) scale(1.06);
+    color: var(--color-tan-bright);
+  }
+}
 
 /* ─── Scroll reveal (only when motion is allowed and JS has run) ────────── */
 @media (prefers-reduced-motion: no-preference) {
@@ -505,6 +899,418 @@
       transform 0.9s var(--ease-soft);
     transition-delay: var(--reveal-delay, 0ms);
   }
+}
+
+/* ═══ Effects & animations ════════════════════════════════════════════════
+   Everything below only moves when the visitor allows motion; the reduced-
+   motion block at the end of this file switches it all off. */
+
+/* ─── Headings: each word rises out of its own line ─────────────────────── */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* room for italic overhangs and descenders (g, y, p) inside the clip */
+  padding: 0.1em 0.08em 0.18em;
+  margin: -0.1em -0.08em -0.18em;
+}
+.split-word-inner {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready [data-reveal]:not(.is-visible) .split-word-inner {
+    transform: translateY(115%) rotate(6deg);
+  }
+  .reveal-ready [data-reveal].is-visible .split-word-inner {
+    transition: transform 1s var(--ease-soft);
+    transition-delay: calc(var(--reveal-delay, 0ms) + var(--wi, 0) * 70ms);
+  }
+}
+
+/* ─── Hero headline: words surface out of a blur, one after another ─────── */
+.hero-word {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-word {
+    animation: word-rise 1.2s var(--ease-soft) both;
+    animation-delay: calc(var(--delay, 0ms) + var(--wi, 0) * 90ms);
+  }
+}
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em) rotate(4deg);
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+/* Hold the hero's entrance (and the first photo's zoom) until the loading
+   screen opens. The inline script in BaseLayout clears this after 6s at most. */
+.is-preloading :is(.hero-in, .hero-word, .hero-slide img) {
+  animation-play-state: paused;
+}
+
+/* Film grain over the hero photos, like a real print */
+.hero-grain {
+  position: absolute;
+  inset: -100%;
+  z-index: 11;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-grain {
+    animation: grain 0.9s steps(5) infinite;
+  }
+  [data-offscreen] .hero-grain {
+    animation-play-state: paused;
+  }
+}
+@keyframes grain {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-4%, 3%);
+  }
+  40% {
+    transform: translate(3%, -5%);
+  }
+  60% {
+    transform: translate(-2%, 4%);
+  }
+  80% {
+    transform: translate(5%, 1%);
+  }
+}
+
+/* ─── Gallery photos: revealed by a shutter-like wipe as they scroll in ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready [data-reveal="wipe"]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+  }
+  .reveal-ready [data-reveal="wipe"]:not(.is-visible) img {
+    scale: 1.25;
+  }
+  .reveal-ready [data-reveal="wipe"].is-visible {
+    transition: clip-path 1.1s var(--ease-shutter);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal-ready [data-reveal="wipe"].is-visible img {
+    transition:
+      scale 1.6s var(--ease-soft) var(--reveal-delay, 0ms),
+      opacity 0.8s var(--ease-soft),
+      filter 1.4s var(--ease-soft),
+      transform 0.9s var(--ease-soft);
+  }
+
+  /* The Baybayin lettering writes itself from left to right */
+  .reveal-ready [data-reveal]:not(.is-visible) .baybayin {
+    clip-path: inset(-10% 100% -10% 0);
+  }
+  .reveal-ready [data-reveal].is-visible .baybayin {
+    transition:
+      clip-path 1.8s var(--ease-soft) 0.2s,
+      background-position 1.3s var(--ease-soft);
+  }
+}
+
+/* ─── Photos fade in once they've loaded (src/scripts/develop.ts) ───────── */
+/* (only once JavaScript runs: develop.ts adds .is-developed) */
+.js img[data-develop] {
+  transition:
+    opacity 0.8s var(--ease-soft),
+    filter 1.4s var(--ease-soft),
+    transform 0.9s var(--ease-soft),
+    scale 1.6s var(--ease-soft);
+}
+.js img[data-develop]:not(.is-developed) {
+  opacity: 0;
+}
+/* Until a photo arrives, its frame is a plain soft box */
+.js :is(.photo-trigger, .img-frame):has(img[data-develop]:not(.is-developed)) {
+  background: var(--color-surface);
+}
+
+/* ─── Loading screen: the logo and a thin progress line ─────────────────── */
+.preloader {
+  display: none;
+}
+.js .preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--color-ink);
+  transition: opacity 0.5s var(--ease-soft);
+}
+/* Failsafe: the inline script in BaseLayout adds this after 6 seconds, in
+   case the loading script never runs */
+.loader-timeout .preloader {
+  display: none;
+}
+.preloader-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+.preloader-mark {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: var(--color-paper);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .preloader-mark {
+    animation: preloader-breathe 1.6s ease-in-out infinite;
+  }
+}
+@keyframes preloader-breathe {
+  50% {
+    transform: scale(0.94);
+  }
+}
+.preloader-bar {
+  width: 8rem;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-cream) 14%, transparent);
+}
+.preloader-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-tan-bright);
+  transform-origin: left;
+  transform: scaleX(calc(var(--progress, 8) / 100)); /* --progress is set by preloader.ts */
+}
+.preloader.is-fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── Viewfinder cursor (mouse only; src/scripts/effects.ts) ────────────── */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 150;
+  pointer-events: none;
+  color: #fff;
+  mix-blend-mode: difference; /* always visible: inverts whatever is under it */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cursor.is-active {
+  opacity: 1;
+}
+.cursor-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  translate: -50% -50%;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  opacity: 0.6;
+  transition:
+    width 0.45s var(--ease-soft),
+    height 0.45s var(--ease-soft),
+    border-radius 0.45s var(--ease-soft),
+    border-color 0.3s ease,
+    opacity 0.3s ease,
+    scale 0.2s ease;
+}
+.cursor[data-state="link"] .cursor-ring {
+  width: 3.5rem;
+  height: 3.5rem;
+  opacity: 1;
+}
+/* Over a photo: the ring becomes a 3:2 camera viewfinder that "focuses" */
+.cursor[data-state="photo"] .cursor-ring {
+  width: 7.5rem;
+  height: 5rem;
+  border-radius: 3px;
+  border-color: transparent;
+  opacity: 1;
+}
+.cursor[data-pressed] .cursor-ring {
+  scale: 0.86;
+}
+.cursor-corner {
+  position: absolute;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 0 solid currentColor;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cursor-corner:nth-child(1) {
+  top: -1px;
+  left: -1px;
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+  --dx: -1;
+  --dy: -1;
+}
+.cursor-corner:nth-child(2) {
+  top: -1px;
+  right: -1px;
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+  --dx: 1;
+  --dy: -1;
+}
+.cursor-corner:nth-child(3) {
+  bottom: -1px;
+  left: -1px;
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+  --dx: -1;
+  --dy: 1;
+}
+.cursor-corner:nth-child(4) {
+  right: -1px;
+  bottom: -1px;
+  border-right-width: 1.5px;
+  border-bottom-width: 1.5px;
+  --dx: 1;
+  --dy: 1;
+}
+.cursor[data-state="photo"] .cursor-corner {
+  opacity: 1;
+  animation: focus-snap 0.55s var(--ease-soft);
+}
+@keyframes focus-snap {
+  0% {
+    translate: calc(var(--dx) * 10px) calc(var(--dy) * 10px);
+  }
+  60% {
+    translate: calc(var(--dx) * -2px) calc(var(--dy) * -2px);
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+.cursor-cross,
+.cursor-label {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cursor-cross {
+  top: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  translate: -50% -50%;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat;
+}
+.cursor-label {
+  top: calc(100% + 0.55rem);
+  translate: -50% 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cursor[data-state="photo"] :is(.cursor-cross, .cursor-label) {
+  opacity: 1;
+}
+/* Over photos the viewfinder replaces the arrow */
+html.has-cursor .photo-trigger {
+  cursor: none;
+}
+
+/* ─── Reading progress: a thin tan line along the top of the screen ─────── */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-tan), var(--color-tan-bright));
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-progress {
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+@keyframes scroll-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ─── Light / dark switch ───────────────────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  color: var(--color-cream);
+  cursor: pointer;
+  transition:
+    color 0.3s var(--ease-soft),
+    background-color 0.3s var(--ease-soft);
+}
+.theme-toggle svg {
+  transition: rotate 0.6s var(--ease-soft);
+}
+@media (hover: hover) {
+  .theme-toggle:hover {
+    color: var(--color-tan);
+    background-color: color-mix(in srgb, var(--color-cream) 8%, transparent);
+  }
+  .theme-toggle:hover svg {
+    rotate: 30deg;
+  }
+}
+:root[data-theme="light"] .theme-icon-sun,
+:root:not([data-theme="light"]) .theme-icon-moon {
+  display: none;
+}
+/* The new theme spreads out in a circle from the button (src/scripts/theme.ts) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ─── Marquee leans and speeds up with the scroll (src/scripts/effects.ts) ─ */
+.marquee-word {
+  display: inline-block;
+  transform: skewX(var(--skew, 0deg));
+}
+
+/* Numbers that count up (About stats) keep a steady width while counting */
+.stat dd {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Lightbox (PhotoSwipe) ─────────────────────────────────────────────── */
@@ -567,9 +1373,5 @@ html .pswp__button:focus-visible {
   .marquee-track > [aria-hidden="true"],
   .marquee-toggle {
     display: none;
-  }
-
-  .scroll-cue-line::after {
-    transform: scaleY(0.5);
   }
 }

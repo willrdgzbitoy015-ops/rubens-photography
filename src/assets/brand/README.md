@@ -5,6 +5,7 @@
 | `logo.png` | Ruben's original logo (white background) | Not used directly. Kept as the master copy |
 | `logo-mark.png` | Just the "R" mark, background removed | Navbar, on a cream badge next to the name |
 | `logo-full.png` | Full logo (R + Baybayin + tagline), background removed | Footer, on a cream card |
+| `baybayin.png` | Just the Baybayin lettering ("ruben potograpya") cut from `logo.png`, white on transparent | Tagline band above About. The site uses it as a mask and colors it tan |
 
 The two versions without a background were made from `logo.png`. The site shows them
 on a cream background so the logo's real colors (dark brown, tan, black) stay

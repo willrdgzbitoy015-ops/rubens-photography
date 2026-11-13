@@ -1,10 +1,11 @@
 ---
 import { site } from '../data/site';
 import Brand from './ui/Brand.astro';
+import BookButton from './ui/BookButton.astro';
 import Icon from './ui/Icon.astro';
 import { isPlaceholder } from '../utils/text';
 
-const { contact, social, footer } = site;
+const { contact, social, footer, location } = site;
 const year = new Date().getFullYear();
 
 // Instagram only shows once its link is filled in (not "[Instagram link]").
@@ -14,49 +15,78 @@ const socials = [
   { label: `${site.brand} on Instagram`, href: social.instagram, icon: 'instagram' },
 ] as const;
 const visibleSocials = socials.filter((s) => !isPlaceholder(s.href));
+
+const headingClass = 'text-xs font-medium tracking-[0.2em] text-tan uppercase';
+const linkClass = 'inline-flex min-h-11 items-center gap-3 text-cream transition-colors hover:text-tan';
 ---
 
 <footer class="border-t border-line bg-surface/60">
-  <div class="shell py-14 sm:py-16">
-    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-      <div class="max-w-sm">
+  <div class="shell pt-14 pb-8 sm:pt-16">
+    <div class="grid gap-12 sm:grid-cols-2 md:grid-cols-12 md:gap-8">
+      <!-- Brand -->
+      <div class="sm:col-span-2 md:col-span-5">
         <a href="#home" class="inline-flex min-h-11 items-center">
           <Brand variant="footer" />
         </a>
-        <p class="mt-3 text-[0.9375rem] text-muted">{footer.line}</p>
+        <p class="mt-4 max-w-xs text-[0.9375rem] leading-relaxed text-muted">{footer.line}</p>
+
+        <ul class="mt-6 flex gap-3">
+          {
+            visibleSocials.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  aria-label={`${s.label} (opens in new tab)`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex size-11 items-center justify-center rounded-full border border-line text-cream transition-[color,background-color,border-color,translate] duration-300 hover:-translate-y-1 hover:border-tan hover:bg-tan hover:text-ink"
+                >
+                  <Icon name={s.icon} class="size-5" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
-      <div class="flex flex-col gap-1 text-[0.9375rem]">
-        <a href={contact.phoneHref} class="inline-flex min-h-11 items-center gap-3 text-cream transition-colors hover:text-tan">
-          <Icon name="phone" class="size-4 text-tan" />
-          <span><span class="sr-only">Call or text: </span>{contact.phoneDisplay}</span>
-        </a>
-        <a href={`mailto:${contact.email}`} class="inline-flex min-h-11 items-center gap-3 break-all text-cream transition-colors hover:text-tan">
-          <Icon name="mail" class="size-4 text-tan" />
-          <span><span class="sr-only">Email: </span>{contact.email}</span>
-        </a>
-      </div>
+      <!-- Page links -->
+      <nav aria-label="Footer" class="md:col-span-3 lg:col-start-7">
+        <p class={headingClass}>Explore</p>
+        <ul class="mt-3">
+          {
+            site.nav.map((link) => (
+              <li>
+                <a href={link.href} class={linkClass}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-      <ul class="flex gap-3">
-        {
-          visibleSocials.map((s) => (
-            <li>
-              <a
-                href={s.href}
-                aria-label={`${s.label} (opens in new tab)`}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex size-11 items-center justify-center rounded-full border border-line text-cream transition-colors hover:border-tan hover:text-tan"
-              >
-                <Icon name={s.icon} class="size-5" />
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <!-- Contact -->
+      <div class="md:col-span-4 lg:col-span-3">
+        <p class={headingClass}>Get in touch</p>
+        <div class="mt-3 flex flex-col text-[0.9375rem]">
+          <a href={contact.phoneHref} class={linkClass}>
+            <Icon name="phone" class="size-4 shrink-0 text-tan" />
+            <span><span class="sr-only">Call or text: </span>{contact.phoneDisplay}</span>
+          </a>
+          <a href={`mailto:${contact.email}`} class:list={[linkClass, 'break-all']}>
+            <Icon name="mail" class="size-4 shrink-0 text-tan" />
+            <span><span class="sr-only">Email: </span>{contact.email}</span>
+          </a>
+          <p class="inline-flex min-h-11 items-center gap-3 text-muted">
+            <Icon name="pin" class="size-4 shrink-0 text-tan" />
+            <span>{location.town}, {location.province}</span>
+          </p>
+        </div>
+        <BookButton label={site.hero.bookCta} class="mt-5" />
+      </div>
     </div>
 
-    <div class="mt-12 flex flex-col-reverse gap-4 border-t border-line pt-7 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+    <div class="mt-14 flex flex-col-reverse gap-4 border-t border-line pt-7 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
       <p>&copy; <span data-year>{year}</span> {site.brand}</p>
       <a href="#home" class="inline-flex min-h-11 items-center gap-2 self-start transition-colors hover:text-tan sm:self-auto">
         {footer.backToTop}

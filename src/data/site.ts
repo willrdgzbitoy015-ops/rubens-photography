@@ -5,8 +5,7 @@
  *  edit to change what the website says.
  *
  *  • Anything in [square brackets] is a placeholder — replace it (brackets too).
- *    While a section still has [placeholders], it shows a small dashed
- *    "Placeholder text" tag; the tag disappears once the brackets are gone.
+ *    FAQ questions whose answer is still "[answer]" stay hidden until it's filled in.
  *  • Photo paths are relative to src/assets/photos/. If a photo file doesn't
  *    exist yet, the site shows a gray placeholder box in its place.
  *  • Text wrapped in *asterisks* is shown in tan italics (used in headlines).
@@ -19,7 +18,10 @@ import { isPlaceholder } from '../utils/text';
 // ── Basics ───────────────────────────────────────────────────────────────────
 
 const brand = "Ruben's Photography";
+/** First name, used in friendly text ("Hi, I'm Ruben", "message Ruben") */
 const photographer = 'Ruben';
+/** Full name, used where people (and Google) need it in full */
+const photographerFullName = 'Ruben Agosto';
 
 const contact = {
   phoneDisplay: '0997 721 4340',
@@ -30,10 +32,12 @@ const contact = {
 };
 
 const social = {
-  /** Ruben's Facebook Page */
+  /** Ruben's Facebook Page (the business page) */
   facebook: 'https://www.facebook.com/profile.php?id=100082353385538',
+  /** Ruben's own Facebook account */
+  facebookPersonal: 'https://www.facebook.com/rubin.agosto.9',
   /** Shown in the footer only once it's a real link */
-  instagram: '[Instagram link]',
+  instagram: 'https://www.instagram.com/rubensagosto/',
   /** Messenger chat link, e.g. https://m.me/100082353385538. Every "book" button opens this. */
   messenger: '[Messenger link]',
 };
@@ -52,10 +56,9 @@ const location = {
   town: 'Palompon',
   province: 'Leyte',
   countryCode: 'PH',
-  serviceArea: '[service area]', // e.g. "Leyte and Biliran"
 };
 
-const years = '[YEARS]';
+const years = '5';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +74,20 @@ export interface Photo {
   placeholder: string;
 }
 
+export interface Slide {
+  /** Path relative to src/assets/photos/, e.g. "hero/slide-01.jpg". Use horizontal photos. */
+  file: string;
+  /** Describe the photo for people who can't see it. */
+  alt: string;
+  /**
+   * Which part of the photo stays in view when it's cropped (phones crop the
+   * sides, wide screens crop top and bottom): "left/right %  top/bottom %".
+   * Put the first number where the people are, e.g. "70% 35%" for a couple
+   * on the right.
+   */
+  focus: string;
+}
+
 export interface PortfolioItem {
   file: string;
   category: Category;
@@ -79,14 +96,54 @@ export interface PortfolioItem {
   orientation: Orientation;
 }
 
+export interface ServiceItem {
+  title: string;
+  text: string;
+  /** Photo on the card, relative to src/assets/photos/ */
+  file: string;
+  alt: string;
+  /** Which part of the photo stays in view when cropped: "left/right %  top/bottom %" */
+  focus: string;
+  /** Portfolio filter the card's link switches on */
+  category: Category;
+  /** Text of the card's link */
+  cta: string;
+}
+
 // ── Everything the website shows ─────────────────────────────────────────────
 
 export const site = {
   brand,
   photographer,
+  photographerFullName,
   /** Brand name as text, next to the logo mark in the navbar. *Italic* part is tan. */
   wordmark: "Ruben's *Photography*",
+  /** Ruben's tagline, from his logo. Plain text, for Google (the band above About shows it big). */
   tagline: 'Moments, captured. Forever.',
+
+  /**
+   * Color theme. 'light' = white background, 'dark' = espresso brown.
+   * The hero photo, the photo viewer and the loading screen stay dark in both.
+   * With showToggle, a sun/moon button in the navbar lets visitors switch
+   * (their choice is remembered); set it to false to lock the site to `default`.
+   */
+  theme: {
+    default: 'light' as 'light' | 'dark',
+    showToggle: true,
+    /** Browser bar color on phones, per theme (keep in sync with --color-ink in global.css) */
+    barColor: { light: '#faf7f2', dark: '#1a110b' },
+  },
+
+  /**
+   * The tagline band between the Portfolio and About sections: the Baybayin
+   * lettering from Ruben's logo (src/assets/brand/baybayin.png), how to read
+   * it, then the tagline in big letters.
+   */
+  taglineBand: {
+    baybayinLabel: `Ruben Potograpya — “${brand}” written in Baybayin`,
+    pronunciation: '(ru · be · n   po · to · g · ra · pya)',
+    line: 'Moments, captured. *Forever.*',
+  },
   contact,
   social,
   bookingUrl,
@@ -105,6 +162,8 @@ export const site = {
     /** Full logo with the Baybayin name and tagline — footer */
     full: 'logo-full.png',
     fullAlt: "Ruben's Photography logo: a stylized R with a camera aperture and film strip, the name in Baybayin, and the tagline “Moments, captured. Forever.”",
+    /** Just the Baybayin lettering, cut from logo.png (white on transparent) — tagline band */
+    baybayin: 'baybayin.png',
   },
 
   // ── SEO & Facebook sharing ─────────────────────────────────────────────────
@@ -112,7 +171,7 @@ export const site = {
     title: "Ruben's Photography | Wedding, Debut & Event Photographer in Palompon, Leyte",
     // Keep this under 155 characters so Google shows all of it.
     description:
-      'Wedding, prenup, debut and event photography in Palompon, Leyte. See the portfolio, then message Ruben on Facebook to book your date.',
+      'Wedding, prenup, debut and event photography in Palompon, Leyte. See the portfolio, then message Ruben Agosto on Facebook to book your date.',
     ogImage: '/og-image.jpg', // file in /public, 1200×630
     ogImageAlt: "Ruben's Photography — wedding, debut and event photographer in Palompon, Leyte",
     locale: 'en_PH',
@@ -139,18 +198,28 @@ export const site = {
     primaryCta: { label: 'View My Work', href: '#portfolio' },
     /** Opens Messenger (or the Facebook Page) in a new tab */
     bookCta: 'Book a Shoot',
-    scrollLabel: 'Scroll',
-    photo: {
-      file: 'hero.jpg',
-      alt: 'Debutante in a red ball gown under white pillars at night',
-      placeholder: 'Hero photo — horizontal, 2400px wide',
-    } satisfies Photo,
+
     /**
-     * Which part of the hero photo stays visible on narrow phone screens
-     * (CSS object-position: "left/center/right  top%"). If the debutante is
-     * cut off on phones, move the first value, e.g. "40% 30%".
+     * Full-screen slideshow behind the headline. Photos cross-fade in this
+     * order with a slow zoom, and pause while the hero is scrolled out of view.
+     * The first photo loads first, so make it the strongest one.
+     *
+     * The photos are in src/assets/photos/hero/ (slide-01.jpg, slide-02.jpg, …),
+     * chosen from Ruben's Facebook albums and lightly edited to match.
+     * Missing files are skipped automatically.
      */
-    photoFocus: 'center 30%',
+    slides: [
+      { file: 'hero/slide-01.jpg', focus: '58% 40%', alt: 'Debutante having her lip gloss touched up before her debut' },
+      { file: 'hero/slide-02.jpg', focus: '52% 33%', alt: 'Newlyweds walking out of the church, the groom raising the bouquet in celebration' },
+      { file: 'hero/slide-03.jpg', focus: '51% 45%', alt: 'Young woman in black posing at night against warm golden city lights' },
+      { file: 'hero/slide-04.jpg', focus: '61% 35%', alt: 'Engaged couple laughing in a close embrace outdoors' },
+      { file: 'hero/slide-05.jpg', focus: '64% 25%', alt: 'Bride with her eyes lowered, holding a bright bouquet in the bridal car' },
+      { file: 'hero/slide-06.jpg', focus: '72% 33%', alt: 'Man on one knee proposing as his partner covers her mouth in surprise' },
+    ] satisfies Slide[],
+    /** Seconds each photo stays on screen */
+    slideSeconds: 7,
+    /** Shown in the gray box if none of the slideshow photos exist yet */
+    placeholder: 'Hero photo — horizontal, 2048px wide or more',
   },
 
   // ── 2. Marquee strip ───────────────────────────────────────────────────────
@@ -161,8 +230,6 @@ export const site = {
   featured: {
     eyebrow: 'Featured Shoot',
     title: 'Michael & Marian — *Engagement Session*',
-    story:
-      '[Michael and Marian wanted their engagement photos to feel like a slow afternoon walk together. We wandered through a garden in full bloom, and between the laughter and quiet glances, they soon forgot the camera was there. These are a few favorite frames from that day.]',
     link: { label: 'See the full portfolio', href: '#portfolio' },
     photos: [
       { file: 'featured/01.jpg', alt: 'Engaged couple walking hand in hand through a flower garden', placeholder: 'Featured photo 01 — horizontal, 1600px wide' },
@@ -179,12 +246,46 @@ export const site = {
     eyebrow: 'Services',
     title: 'What I *photograph*',
     intro: 'Every celebration has its own rhythm. I adapt to yours.',
+    // Each card shows one photo (from src/assets/photos/) and links to that
+    // category in the Portfolio.
     items: [
-      { title: 'Weddings', text: '[Your wedding day, from getting ready to the last dance.]' },
-      { title: 'Prenup & Engagement', text: '[A relaxed session for your save-the-dates and wedding AVP.]' },
-      { title: 'Debut & Pre-debut', text: '[Your 18th, from the pre-debut shoot to the eighteen roses.]' },
-      { title: 'Birthdays, Christenings & Events', text: '[Milestone birthdays, christenings, reunions and team events.]' },
-    ],
+      {
+        title: 'Weddings',
+        text: 'Your wedding day, from getting ready to the last dance.',
+        file: 'portfolio/wedding-02.jpg',
+        alt: 'Newlyweds kissing as confetti falls',
+        focus: '47% 40%',
+        category: 'wedding',
+        cta: 'See wedding photos',
+      },
+      {
+        title: 'Prenup & Engagement',
+        text: 'A relaxed session for your save-the-dates and wedding AVP.',
+        file: 'portfolio/prenup-02.jpg',
+        alt: 'Couple in a red gown and cream suit among the trees',
+        focus: '48% 45%',
+        category: 'prenup',
+        cta: 'See prenup photos',
+      },
+      {
+        title: 'Debut & Pre-debut',
+        text: 'Your 18th, from the pre-debut shoot to the eighteen roses.',
+        file: 'portfolio/debut-03.jpg',
+        alt: 'Debutante seated in a red gown under white pillars',
+        focus: '52% 50%',
+        category: 'debut',
+        cta: 'See debut photos',
+      },
+      {
+        title: 'Birthdays, Christenings & Events',
+        text: 'Milestone birthdays, christenings, reunions and team events.',
+        file: 'portfolio/birthday-02.jpg',
+        alt: 'Little girl in heart-shaped sunglasses and a strawberry headscarf at her first birthday shoot',
+        focus: '54% 55%',
+        category: 'birthday',
+        cta: 'See birthday photos',
+      },
+    ] satisfies ServiceItem[],
   },
 
   // ── 5. Portfolio ───────────────────────────────────────────────────────────
@@ -209,12 +310,12 @@ export const site = {
       { file: 'portfolio/wedding-01.jpg', category: 'wedding', orientation: 'horizontal', alt: 'Bride and groom at the church altar' },
       { file: 'portfolio/debut-01.jpg', category: 'debut', orientation: 'vertical', alt: 'Debutante in profile with statement earrings' },
       { file: 'portfolio/prenup-01.jpg', category: 'prenup', orientation: 'horizontal', alt: 'Expecting couple with a violin in the forest' },
-      { file: 'portfolio/birthday-01.jpg', category: 'birthday', orientation: 'vertical', alt: 'Celebrant at her 70th birthday before a gold backdrop' },
+      { file: 'portfolio/birthday-01.jpg', category: 'birthday', orientation: 'horizontal', alt: 'Young woman in a white dress smiling over a cup of coffee in a café' },
       { file: 'portfolio/events-01.jpg', category: 'events', orientation: 'horizontal', alt: 'Pickleball team on a lit court at night' },
       { file: 'portfolio/wedding-02.jpg', category: 'wedding', orientation: 'vertical', alt: 'Newlyweds kissing as confetti falls' },
       { file: 'portfolio/debut-02.jpg', category: 'debut', orientation: 'horizontal', alt: 'Debutante in a yellow gown at her debut table' },
       { file: 'portfolio/prenup-02.jpg', category: 'prenup', orientation: 'vertical', alt: 'Couple in a red gown and cream suit among the trees' },
-      { file: 'portfolio/birthday-02.jpg', category: 'birthday', orientation: 'horizontal', alt: 'Celebrant dancing with a bouquet' },
+      { file: 'portfolio/birthday-02.jpg', category: 'birthday', orientation: 'horizontal', alt: 'Little girl in heart-shaped sunglasses and a strawberry headscarf at her first birthday shoot' },
       { file: 'portfolio/events-02.jpg', category: 'events', orientation: 'vertical', alt: 'Player resting against the court fence at night' },
       { file: 'portfolio/wedding-03.jpg', category: 'wedding', orientation: 'vertical', alt: "Close-up of the bride's veil and earring" },
       { file: 'portfolio/debut-03.jpg', category: 'debut', orientation: 'vertical', alt: 'Debutante seated in a red gown under white pillars' },
@@ -225,21 +326,27 @@ export const site = {
   about: {
     eyebrow: 'About',
     title: `Hi, I'm *${photographer}*`,
-    // One string per paragraph.
+    // One string per paragraph. Approved by Ruben (2026-11-12).
     bio: [
-      `[I'm ${photographer}, a photographer based in ${location.town}, ${location.province}. I photograph weddings, prenups, debuts and family celebrations, from the big entrances to the quiet moments in between. My style is natural and cinematic: I'll guide you when you need it, then step back and let the day unfold. Replace this with your own story.]`,
+      `I am ${photographerFullName}, a professional photographer based in ${location.town}, ${location.province}. For the past five years, I have photographed weddings, prenuptial sessions, debuts and family celebrations, capturing both the grand entrances and the quiet moments in between.`,
+      'My style is natural and cinematic. I offer gentle direction whenever it is needed, then step back and allow your day to unfold as it truly happens.',
     ],
     stats: [
       { value: `${years}+`, label: 'Years of experience' },
       { value: '7.7K', label: 'Facebook followers' },
       { value: '100%', label: 'Recommend (12 reviews)' },
     ],
-    serviceArea: `Based in ${location.town}, ${location.province}. Available across ${location.serviceArea}.`,
+    serviceArea: `Based in ${location.town}, ${location.province}.`,
     photo: {
       file: 'about.jpg',
-      alt: `${photographer}, the photographer behind ${brand}, camera in hand`,
+      alt: `${photographerFullName}, the photographer behind ${brand}, at his desk with a laptop, his cameras and printed photos behind him`,
       placeholder: 'Photo of Ruben — vertical',
     } satisfies Photo,
+    /**
+     * Which part of Ruben's photo stays in view (the frame is taller than the
+     * photo, so the sides are trimmed). "50% 50%" = centered.
+     */
+    photoFocus: '50% 50%',
   },
 
   // ── 7. How it works ────────────────────────────────────────────────────────
@@ -261,7 +368,11 @@ export const site = {
     intro: "Message me on Facebook with your date, location and type of shoot, and I'll send you a quote.",
     /** Big button — opens Messenger (or the Facebook Page) in a new tab */
     primaryCta: 'Message me on Messenger',
+    /** Card with Ruben's Facebook Page, his own Facebook account and Instagram */
+    socialTitle: 'Facebook & Instagram',
     facebookLabel: 'Facebook Page',
+    personalFacebookLabel: `${photographer}'s Facebook`,
+    instagramLabel: 'Instagram',
     phoneLabel: `Call or text ${contact.phoneDisplay}`,
     callLabel: 'Call',
     textLabel: 'Text',
@@ -314,7 +425,7 @@ export const site = {
     items: [
       {
         q: 'How far ahead should I book?',
-        a: '[answer]',
+        a: 'I recommend booking about a month ahead, so your date is still free and we have time to plan your shoot.',
       },
       {
         q: 'How much does a shoot cost?',
@@ -322,7 +433,7 @@ export const site = {
       },
       {
         q: 'When will I get my photos?',
-        a: '[answer]',
+        a: 'Your edited photos will be ready within 1 to 2 weeks after your shoot.',
       },
       {
         q: 'How do I book?',
@@ -336,9 +447,6 @@ export const site = {
     line: 'Wedding, debut and event photography from Palompon, Leyte.',
     backToTop: 'Back to top',
   },
-
-  // Small tag shown next to placeholder text so it's easy to spot before launch.
-  placeholderNote: 'Placeholder text — edit in src/data/site.ts',
 };
 
 export type Site = typeof site;

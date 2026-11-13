@@ -5,6 +5,9 @@ import Icon from './ui/Icon.astro';
 import BookButton from './ui/BookButton.astro';
 ---
 
+<!-- Reading progress: a thin tan line across the top that grows as you scroll -->
+<div class="scroll-progress" aria-hidden="true"></div>
+
 <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50 border-b border-transparent">
   <div class="shell flex h-16 items-center justify-between gap-6 lg:h-20">
     <a href="#home" class="-my-2 flex min-h-11 items-center py-2" data-brand-link>
@@ -26,6 +29,14 @@ import BookButton from './ui/BookButton.astro';
     </nav>
 
     <div class="flex items-center gap-2">
+      {
+        site.theme.showToggle && (
+          <button type="button" class="theme-toggle" aria-label="Switch color theme" data-theme-toggle>
+            <Icon name="moon" class="theme-icon-moon size-5" />
+            <Icon name="sun" class="theme-icon-sun size-5" />
+          </button>
+        )
+      }
       <BookButton label={site.navCta} class="hidden min-h-11 px-5 lg:inline-flex" />
       <button
         type="button"
@@ -47,7 +58,7 @@ import BookButton from './ui/BookButton.astro';
     <ul class="flex flex-col">
       {
         site.nav.map((link, i) => (
-          <li class="border-b border-line/70">
+          <li class="menu-item border-b border-line/70" style={`--i: ${i}`}>
             <a href={link.href} class="flex min-h-14 items-baseline gap-4 py-3 font-serif text-[2.1rem] leading-tight text-cream">
               <span class="font-sans text-xs tracking-[0.2em] text-tan" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
@@ -77,4 +88,5 @@ import BookButton from './ui/BookButton.astro';
 
 <script>
   import '../scripts/menu.ts';
+  import '../scripts/theme.ts';
 </script>

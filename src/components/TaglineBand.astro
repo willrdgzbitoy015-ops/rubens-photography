@@ -1,0 +1,32 @@
+---
+import { site } from '../data/site';
+import Baybayin from './ui/Baybayin.astro';
+import { splitEmphasis } from '../utils/text';
+
+// Ruben's tagline, as in his logo: the name in Baybayin, how to read it, then the line itself.
+const { taglineBand: band } = site;
+const line = splitEmphasis(band.line);
+// A wide (em) space between the two words, as in the logo. It still wraps on narrow phones.
+const pronunciation = band.pronunciation.replace(/\s{2,}/g, ' ');
+---
+
+<div class="tagline-band relative isolate overflow-hidden border-t border-line/60 py-20 sm:py-28 lg:py-32">
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_60%_at_50%_50%,color-mix(in_srgb,var(--color-tan)_9%,transparent),transparent_70%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell flex flex-col items-center text-center">
+    <div class="group flex flex-col items-center" data-reveal>
+      <Baybayin class="w-[min(78vw,28rem)]" />
+      <p class="mt-4 text-[0.6875rem] tracking-[0.18em] text-muted sm:text-xs sm:tracking-[0.28em]" aria-hidden="true">
+        {pronunciation}
+      </p>
+    </div>
+
+    <p class="tagline-line mt-9 font-serif text-[clamp(2.5rem,9vw,5.25rem)] leading-[1.02] text-cream" data-reveal style="--reveal-delay: 120ms">
+      {line.map((part) => (part.em ? <em class="text-tan">{part.text}</em> : part.text))}
+    </p>
+  </div>
+</div>

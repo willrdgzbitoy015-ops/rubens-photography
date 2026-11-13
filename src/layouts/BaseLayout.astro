@@ -23,6 +23,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: site.brand,
+  slogan: site.tagline,
+  founder: { '@type': 'Person', name: site.photographerFullName, jobTitle: 'Photographer' },
   description,
   url: canonical.href,
   image: ogImage.href,
@@ -41,14 +43,42 @@ const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={site.theme.default}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content={site.seo.themeColor} />
+    <meta
+      name="theme-color"
+      content={site.theme.barColor[site.theme.default]}
+      data-light={site.theme.barColor.light}
+      data-dark={site.theme.barColor.dark}
+    />
+
+    <!-- Runs before the page is drawn, so there's no flash of the wrong theme:
+         applies the visitor's saved light/dark choice, marks that JavaScript
+         works (for the loading screen and photo effects), and holds the hero's
+         entrance until the loading screen opens, with a 6-second failsafe. -->
+    <script is:inline define:vars={{ defaultTheme: site.theme.default, allowToggle: site.theme.showToggle }}>
+      (() => {
+        const root = document.documentElement;
+        let theme = defaultTheme;
+        try {
+          const saved = localStorage.getItem('theme');
+          if (allowToggle && (saved === 'light' || saved === 'dark')) theme = saved;
+        } catch {}
+        root.dataset.theme = theme;
+        const bar = document.querySelector('meta[name="theme-color"]');
+        if (bar && bar.dataset[theme]) bar.content = bar.dataset[theme];
+        root.classList.add('js', 'is-preloading');
+        setTimeout(() => {
+          root.classList.remove('is-preloading');
+          root.classList.add('loader-timeout');
+        }, 6000);
+      })();
+    </script>
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

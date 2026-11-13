@@ -30,8 +30,7 @@ To check the final version: `npm run build`, then `npm run preview`.
 `src/data/site.ts`. You never need to touch the other files to change the wording.
 
 - Anything in **[square brackets]** is a placeholder. Replace it, brackets included.
-- While a section still has a [placeholder], it shows a small dashed
-  **"Placeholder text"** tag. The tag disappears by itself once the brackets are gone.
+- A FAQ question whose answer is still `[answer]` stays hidden until you fill it in.
 - In headlines, words wrapped in `*asterisks*` show in tan italics.
 - Don't add prices, payment details or a packages section: Ruben gives every
   client a personal quote on Messenger, since his rates vary by location.
@@ -44,7 +43,7 @@ Photos go in **`src/assets/photos/`**, using these exact file names:
 
 | File | Section |
 | --- | --- |
-| `hero.jpg` | Full-screen cover at the top |
+| `hero.jpg` + the photos listed in `hero.slides` | Full-screen slideshow at the top |
 | `featured/01.jpg` … `featured/06.jpg` | Featured shoot (01 is the big one) |
 | `portfolio/wedding-01.jpg`, `prenup-01.jpg`, `debut-01.jpg`, … | Portfolio, 12 photos |
 | `about.jpg` | Photo of Ruben in the About section (vertical) |
@@ -57,12 +56,17 @@ shows the exact name it's waiting for, so the site always works.
   for people using screen readers) in `src/data/site.ts`.
 - **To add a portfolio photo:** put the file in `src/assets/photos/portfolio/`, then add a
   line to `portfolio.items` in `src/data/site.ts` with its file name, category and alt text.
-- **Photo of Ruben:** save it as `src/assets/photos/about.jpg`. That's all; the gray box
-  is replaced automatically.
+- **Photo of Ruben:** `src/assets/photos/about.jpg` (already in place). To change it, save
+  the new photo over it with the same name.
+- **Slideshow at the top:** the photos, their order and alt text are the
+  `hero.slides` list in `src/data/site.ts`. Dedicated slideshow photos go in
+  `src/assets/photos/hero/` (`slide-01.jpg`, `slide-02.jpg`, …). Use horizontal photos.
+  `prompts/hero-slideshow-photos.md` is a ready-made prompt for Claude to pick, download
+  and lightly edit Ruben's best photos from his Facebook Page.
 - Use the original, full-quality JPGs. The site makes small, fast versions (AVIF + WebP)
   for phones by itself when it's built.
-- If the hero photo crops out the subject on phones, change `photoFocus` in the
-  `hero` part of `src/data/site.ts` (for example `'40% 30%'`).
+- If a slideshow photo crops out the people on phones, change that photo's `focus` in
+  `hero.slides` in `src/data/site.ts` (for example `'70% 35%'` when they're on the right).
 
 **Facebook share picture:** `public/og-image.jpg` (1200×630) is what Facebook shows
 when someone shares the link. Right now it shows the logo. Once `hero.jpg` is in place,
@@ -81,6 +85,18 @@ Ruben's logo is already set up in `src/assets/brand/`: the "R" mark shows in the
 `logo-mark.png` and `logo-full.png` with new transparent PNGs using the same names.
 See `src/assets/brand/README.md` for details. If those files are missing, the site
 shows the name as a text logo instead.
+
+**Light or dark background.** The site has two color themes: light (warm white) and
+dark (espresso brown). `theme.default` in `src/data/site.ts` picks the one visitors see
+first. The sun/moon button in the navbar switches between them and remembers the
+choice. Set `theme.showToggle` to `false` to lock the site to one theme. The hero, the
+photo viewer and the loading screen stay dark in both. The colors are at the top of
+`src/styles/global.css`.
+
+**Effects.** A camera-shutter loading screen, photos that "develop" as they load, a
+viewfinder cursor over photos, word-by-word headings and more. They're all in
+`src/styles/global.css` (the "Effects & animations" part) and `src/scripts/`. Anyone who
+has turned on "reduce motion" on their phone or computer gets a still version.
 
 ---
 
@@ -137,8 +153,9 @@ From now on, every change you push to GitHub goes live automatically.
 
 ```
 public/              favicon, Facebook share image, robots.txt
-src/assets/photos/   photos (hero, about, featured/, portfolio/)
-src/assets/brand/    logo
+src/assets/photos/   photos (hero, hero/ slideshow, about, featured/, portfolio/)
+src/assets/brand/    logo (+ the Baybayin lettering cut from it)
+prompts/             ready-made prompts for Claude (slideshow photos)
 src/data/site.ts     ALL text and settings  ← edit this
 src/components/      one file per section of the page
 src/styles/global.css colors and fonts (theme tokens at the top)

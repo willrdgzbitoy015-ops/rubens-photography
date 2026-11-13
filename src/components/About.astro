@@ -2,25 +2,29 @@
 import { site } from '../data/site';
 import Photo from './ui/Photo.astro';
 import SectionHeading from './ui/SectionHeading.astro';
-import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
-import { hasPlaceholder } from '../utils/text';
 
 const { about } = site;
 ---
 
 <section id="about" aria-labelledby="about-title" class="section border-t border-line/60 bg-surface/40">
-  <div class="shell grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-    <div class="group relative aspect-[4/5] overflow-hidden rounded-photo sm:mx-auto sm:w-4/5 lg:col-span-5 lg:w-full" data-reveal>
-      <Photo
-        file={about.photo.file}
-        alt={about.photo.alt}
-        placeholder={about.photo.placeholder}
-        widths={[400, 600, 800, 1200]}
-        sizes="(min-width: 1200px) 450px, (min-width: 1024px) 38vw, (min-width: 640px) 80vw, calc(100vw - 2.5rem)"
-        fill
-        class="zoom-img"
-      />
+  <div class="shell grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
+    <div class="about-photo group relative sm:mx-auto sm:w-4/5 lg:col-span-5 lg:w-full" data-reveal>
+      <!-- Tan frame behind the photo; the photo lifts off it on hover -->
+      <span class="about-frame" aria-hidden="true"></span>
+
+      <div class="about-photo-inner img-frame relative aspect-[4/5] overflow-hidden rounded-photo">
+        <Photo
+          file={about.photo.file}
+          alt={about.photo.alt}
+          placeholder={about.photo.placeholder}
+          widths={[400, 600, 800, 1080]}
+          sizes="(min-width: 1200px) 450px, (min-width: 1024px) 38vw, (min-width: 640px) 80vw, calc(100vw - 2.5rem)"
+          fill
+          class="zoom-img"
+          style={`object-position: ${about.photoFocus}`}
+        />
+      </div>
     </div>
 
     <div class="lg:col-span-7">
@@ -28,15 +32,14 @@ const { about } = site;
 
       <div class="mt-7 space-y-4 text-base text-cream/85 sm:text-lg" data-reveal style="--reveal-delay: 100ms">
         {about.bio.map((paragraph) => <p>{paragraph}</p>)}
-        {hasPlaceholder(...about.bio) && <DraftNote />}
       </div>
 
       <dl class="mt-10 grid grid-cols-3 divide-x divide-line border-y border-line" data-reveal style="--reveal-delay: 180ms">
         {
           about.stats.map((stat) => (
-            <div class="flex flex-col-reverse gap-1.5 px-2 py-6 text-center first:pl-0 last:pr-0 sm:px-4">
+            <div class="stat flex flex-col-reverse gap-1.5 px-2 py-6 text-center first:pl-0 last:pr-0 sm:px-4">
               <dt class="text-[0.6875rem] leading-snug tracking-[0.12em] text-muted uppercase sm:text-xs">{stat.label}</dt>
-              <dd class="font-serif text-[clamp(1.6rem,7vw,2.75rem)] leading-none font-semibold break-words text-tan">
+              <dd class="font-serif text-[clamp(1.6rem,7vw,2.75rem)] leading-none font-semibold break-words text-tan" data-count>
                 {stat.value}
               </dd>
             </div>

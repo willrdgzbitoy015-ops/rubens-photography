@@ -3,8 +3,16 @@ import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import Icon from './ui/Icon.astro';
 import BookButton from './ui/BookButton.astro';
+import { isPlaceholder } from '../utils/text';
 
 const { contactSection: c, contact, social } = site;
+
+// Social links in the first card; any still left as a [placeholder] is hidden.
+const socialLinks = [
+  { label: c.facebookLabel, href: social.facebook, srLabel: `${site.brand} on Facebook` },
+  { label: c.personalFacebookLabel, href: social.facebookPersonal, srLabel: `${site.photographerFullName} on Facebook` },
+  { label: c.instagramLabel, href: social.instagram, srLabel: `${site.photographerFullName} on Instagram` },
+].filter((link) => !isPlaceholder(link.href));
 ---
 
 <section id="contact" aria-labelledby="contact-title" class="section relative isolate overflow-hidden">
@@ -29,23 +37,30 @@ const { contactSection: c, contact, social } = site;
 
     <!-- Other ways to reach Ruben -->
     <ul class="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3" data-reveal style="--reveal-delay: 180ms">
-      <li class="flex">
-        <a
-          href={social.facebook}
-          target="_blank"
-          rel="noopener"
-          class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center"
-        >
-          <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
-            <Icon name="facebook" class="size-5" />
-          </span>
-          <span class="font-medium text-cream">{c.facebookLabel}</span>
-          <span class="text-sm text-muted">{site.brand}<span class="sr-only"> (opens in a new tab)</span></span>
-        </a>
+      <li class="card flex flex-col items-center gap-3 p-6 text-center">
+        <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
+          <Icon name="facebook" class="size-5" />
+        </span>
+        <span class="font-medium text-cream">{c.socialTitle}</span>
+        <span class="flex flex-wrap justify-center gap-2">
+          {
+            socialLinks.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener"
+                aria-label={`${link.label}: ${link.srLabel} (opens in new tab)`}
+                class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </span>
       </li>
 
       <li class="card flex flex-col items-center gap-3 p-6 text-center">
-        <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
+        <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
           <Icon name="phone" class="size-5" />
         </span>
         <span class="font-medium text-cream">{c.phoneLabel}</span>
@@ -67,7 +82,7 @@ const { contactSection: c, contact, social } = site;
 
       <li class="flex">
         <a href={`mailto:${contact.email}`} class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center">
-          <span class="flex size-12 items-center justify-center rounded-full border border-line text-tan">
+          <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
             <Icon name="mail" class="size-5" />
           </span>
           <span class="font-medium text-cream">{c.emailLabel}</span>

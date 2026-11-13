@@ -1,0 +1,28 @@
+---
+import { site } from '../../data/site';
+import { getBrandImage } from '../../utils/photos';
+
+/**
+ * "Ruben Potograpya" in Baybayin, exactly as drawn in Ruben's logo.
+ * The lettering (src/assets/brand/baybayin.png) is used as a mask, so CSS
+ * decides its color: tan, with a light sweep across it on hover.
+ * Shows nothing if the file is missing.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const image = getBrandImage(site.logo.baybayin);
+---
+
+{
+  image && (
+    <span
+      role="img"
+      aria-label={site.taglineBand.baybayinLabel}
+      class:list={['baybayin', className]}
+      style={`--baybayin: url("${image.src}"); aspect-ratio: ${image.width} / ${image.height}`}
+    />
+  )
+}

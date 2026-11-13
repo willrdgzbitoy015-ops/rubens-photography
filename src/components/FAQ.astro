@@ -1,28 +1,27 @@
 ---
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
-import DraftNote from './ui/DraftNote.astro';
 import Icon from './ui/Icon.astro';
-import { hasPlaceholder } from '../utils/text';
+import { isPlaceholder } from '../utils/text';
 
 const { faq } = site;
+// A question whose answer is still "[answer]" stays hidden until it's filled in.
+const items = faq.items.filter((item) => !isPlaceholder(item.a));
 ---
 
 <section id="faq" aria-labelledby="faq-title" class="section">
   <div class="shell grid gap-10 lg:grid-cols-12 lg:gap-16">
     <div class="lg:col-span-5">
-      <SectionHeading id="faq-title" eyebrow={faq.eyebrow} title={faq.title} intro={faq.intro}>
-        {faq.items.some((item) => hasPlaceholder(item.q, item.a)) && <DraftNote class="mt-6" />}
-      </SectionHeading>
+      <SectionHeading id="faq-title" eyebrow={faq.eyebrow} title={faq.title} intro={faq.intro} />
     </div>
 
     <div class="border-t border-line lg:col-span-7" data-reveal style="--reveal-delay: 100ms">
       {
-        faq.items.map((item) => (
+        items.map((item) => (
           <details class="faq-item group border-b border-line">
             <summary class="flex min-h-11 items-center justify-between gap-6 py-6 font-serif text-[1.5rem] leading-snug text-cream transition-colors hover:text-tan sm:text-[1.65rem]">
               {item.q}
-              <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-tan transition-colors group-open:border-tan/60">
+              <span class="faq-badge flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-tan group-open:border-tan/60">
                 <Icon name="plus" class="faq-icon size-4" />
               </span>
             </summary>
