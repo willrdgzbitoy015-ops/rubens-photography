@@ -21,8 +21,13 @@
   --color-tan: #a87c4f;          /* the one accent: the logo's tan */
   --color-tan-bright: #c29466;   /* tan hover state */
   --color-placeholder: #2b1e15;  /* "photo goes here" boxes */
-  --color-paper: #f2ede4;        /* light card behind the logo — the same in both themes */
   --color-shine: #f2ede4;        /* the light that sweeps across the Baybayin lettering */
+
+  /* The logo's three inks (see .logo-art). On dark backgrounds its dark
+     brown and black turn cream; its tan stays tan. */
+  --color-logo-brown: #f2ede4;
+  --color-logo-tan: #a87c4f;
+  --color-logo-black: #f2ede4;
 
   --font-serif: "Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -52,6 +57,10 @@
   --color-tan-bright: #74502c;   /* tan hover state (darker on white) */
   --color-placeholder: #eee6da;
   --color-shine: #f6e2c8;
+  /* On light backgrounds the logo keeps its true colors */
+  --color-logo-brown: #3d2314;
+  --color-logo-tan: #a87c4f;
+  --color-logo-black: #0d0d0d;
   --shadow-photo: 0 30px 60px -32px rgb(61 35 20 / 0.45);
   --shadow-card: 0 18px 40px -26px rgb(61 35 20 / 0.35);
 }
@@ -74,6 +83,9 @@ html .pswp,
   --color-tan-bright: #c29466;
   --color-placeholder: #2b1e15;
   --color-shine: #f2ede4;
+  --color-logo-brown: #f2ede4;
+  --color-logo-tan: #a87c4f;
+  --color-logo-black: #f2ede4;
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────── */
@@ -83,6 +95,7 @@ html .pswp,
     background-color: var(--color-ink);
     color: var(--color-cream);
     scroll-padding-top: 5rem; /* keeps section headings clear of the sticky navbar */
+    scrollbar-color: color-mix(in srgb, var(--color-muted) 55%, transparent) var(--color-ink);
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
@@ -162,34 +175,6 @@ html .pswp,
   @media (width >= 64rem) {
     .section {
       padding-block: 8rem;
-    }
-  }
-
-  /* Small tan uppercase label above every section headline */
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1.4;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--color-tan);
-  }
-  .eyebrow::before {
-    content: "";
-    width: 1.75rem;
-    height: 1px;
-    background: currentColor;
-    flex: none;
-    transition: width 0.5s var(--ease-soft);
-  }
-  /* The little line before a section label grows when the heading is hovered */
-  @media (hover: hover) {
-    .section-heading:hover .eyebrow::before {
-      width: 3rem;
     }
   }
 
@@ -326,7 +311,7 @@ html .pswp,
       transform 0.45s var(--ease-soft);
   }
   @media (hover: hover) {
-    .card-hover:hover .icon-badge {
+    :is(.card-hover, .contact-row):hover .icon-badge {
       background-color: var(--color-tan);
       border-color: var(--color-tan);
       color: var(--color-ink);
@@ -403,15 +388,15 @@ html .pswp,
     }
   }
 
-  /* Text link with an arrow, e.g. "See the full portfolio →" */
+  /* Text link with an arrow, e.g. "See the full portfolio →" (ui/ArrowLink.astro).
+     It flows like text, so when it wraps the arrow stays with the last word. */
   .arrow-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    min-height: 2.75rem;
+    display: inline-block;
+    padding-block: 0.75rem; /* with the line height: a 44px+ tap target */
     color: var(--color-tan);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
+    line-height: 1.6;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     text-decoration: underline;
@@ -420,6 +405,9 @@ html .pswp,
     transition: text-decoration-color 0.25s var(--ease-soft);
   }
   .arrow-link .arrow {
+    display: inline-block;
+    margin-left: 0.55em;
+    vertical-align: -0.2em;
     transition: transform 0.3s var(--ease-soft);
   }
   @media (hover: hover) {
@@ -428,6 +416,30 @@ html .pswp,
     }
     .arrow-link:hover .arrow {
       transform: translateX(4px);
+    }
+  }
+
+  /* Small outlined button, e.g. "Call", "Text", "Instagram" in Contact */
+  .pill-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    color: var(--color-cream);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition:
+      border-color 0.25s var(--ease-soft),
+      color 0.25s var(--ease-soft),
+      background-color 0.25s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .pill-link:hover {
+      border-color: var(--color-tan);
+      color: var(--color-tan);
+      background-color: color-mix(in srgb, var(--color-tan) 8%, transparent);
     }
   }
 
@@ -495,6 +507,44 @@ html .pswp,
   }
   .faq-item[open] .faq-icon {
     transform: rotate(45deg);
+  }
+}
+
+/* ─── Logo in the theme's colors (src/components/ui/LogoArt.astro) ──────── */
+/* The ink sheet holds the logo's dark brown, tan and black side by side.
+   Each layer below shows one of them as a mask and paints it with its
+   --color-logo-* token, so the logo has no background of its own and
+   recolors with the theme (cream + tan on dark, true colors on light). */
+.logo-art {
+  display: grid;
+  flex: none;
+}
+.logo-ink {
+  grid-area: 1 / 1;
+  -webkit-mask: var(--logo-inks) 0 0 / 300% 100% no-repeat;
+  mask: var(--logo-inks) 0 0 / 300% 100% no-repeat;
+  transition: background-color 0.35s var(--ease-soft);
+}
+.logo-ink-brown {
+  background-color: var(--color-logo-brown);
+}
+.logo-ink-tan {
+  background-color: var(--color-logo-tan);
+  -webkit-mask-position: 50% 0;
+  mask-position: 50% 0;
+}
+.logo-ink-black {
+  background-color: var(--color-logo-black);
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+}
+/* Windows high-contrast mode: draw the whole logo in the text color */
+@media (forced-colors: active) {
+  .logo-art {
+    forced-color-adjust: none;
+  }
+  .logo-ink {
+    background-color: CanvasText;
   }
 }
 
@@ -618,8 +668,7 @@ html .pswp,
   }
 }
 
-.hero-eyebrow {
-  color: var(--color-tan-bright);
+.hero-place {
   text-shadow: 0 1px 14px color-mix(in srgb, var(--color-ink) 90%, transparent);
 }
 .hero-title {
@@ -716,26 +765,17 @@ html .pswp,
 
 /* ─── Hover details, section by section ─────────────────────────────────── */
 
-/* Navbar logo badge tilts; footer logo card lifts */
-.brand-badge,
-.brand-card {
+/* Navbar logo mark tilts; footer logo lifts */
+.brand-mark,
+.brand-full {
   transition: transform 0.5s var(--ease-soft);
 }
-.brand-card {
-  box-shadow: var(--shadow-card);
-}
-/* On the white background the logo's cream cards need an edge */
-:root[data-theme="light"] :is(.brand-card, .site-header[data-scrolled] .brand-badge) {
-  box-shadow:
-    inset 0 0 0 1px var(--color-line),
-    var(--shadow-card);
-}
 @media (hover: hover) {
-  a:hover .brand-badge {
-    transform: rotate(-10deg) scale(1.06);
+  a:hover .brand-mark {
+    transform: rotate(-8deg) scale(1.06);
   }
-  a:hover .brand-card {
-    transform: translateY(-4px) rotate(-1.5deg);
+  a:hover .brand-full {
+    transform: translateY(-4px);
   }
 }
 
@@ -770,6 +810,18 @@ html .pswp,
 }
 .step-title {
   transition: color 0.4s var(--ease-soft);
+}
+/* Phones: a thin line joins each step's circle to the next one */
+@media (width < 40rem) {
+  .step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 3.5rem;
+    bottom: -2.5rem;
+    left: calc(1.75rem - 0.5px);
+    width: 1px;
+    background: var(--color-line);
+  }
 }
 @media (hover: hover) {
   .step:hover .step-num {
@@ -1065,14 +1117,6 @@ html .pswp,
   flex-direction: column;
   align-items: center;
   gap: 1.75rem;
-}
-.preloader-mark {
-  display: grid;
-  place-items: center;
-  width: 4.5rem;
-  height: 4.5rem;
-  border-radius: 999px;
-  background: var(--color-paper);
 }
 @media (prefers-reduced-motion: no-preference) {
   .preloader-mark {

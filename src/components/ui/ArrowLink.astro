@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+
+/**
+ * Tan uppercase text link with an arrow, e.g. "See the full portfolio →".
+ * When the text wraps, the arrow stays on the line with the last word.
+ * Extra text for screen readers can go in the slot.
+ */
+type Props = HTMLAttributes<'a'> & { label: string };
+
+const { label, class: className, ...attrs } = Astro.props;
+const words = label.trim().split(/\s+/);
+const last = words.pop();
+---
+
+<a class:list={['arrow-link', className]} {...attrs}>
+  {words.length > 0 && `${words.join(' ')} `}<span class="whitespace-nowrap">{last}<slot /><Icon name="arrow" class="arrow size-4" /></span>
+</a>

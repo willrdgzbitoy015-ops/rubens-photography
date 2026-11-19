@@ -1,12 +1,13 @@
 ---
-import { Image } from 'astro:assets';
 import { site } from '../../data/site';
 import { getBrandImage } from '../../utils/photos';
 import { splitEmphasis } from '../../utils/text';
+import LogoArt from './LogoArt.astro';
 
 /**
- * nav:    "R" mark on a cream badge + the text wordmark
- * footer: the full logo (with Baybayin + tagline) on a cream card
+ * nav:    the "R" mark + the text wordmark
+ * footer: the full logo (with Baybayin + tagline)
+ * Both have no background and take the theme's colors (see LogoArt).
  * Falls back to the text wordmark if the logo files are missing.
  */
 interface Props {
@@ -15,23 +16,16 @@ interface Props {
 }
 
 const { variant = 'nav', class: className } = Astro.props;
-const mark = getBrandImage(site.logo.mark);
-const full = getBrandImage(site.logo.full);
+const hasFull = Boolean(getBrandImage(site.logo.full));
 const parts = splitEmphasis(site.wordmark);
 ---
 
 {
-  variant === 'footer' && full ? (
-    <span class:list={['brand-card inline-block rounded-2xl bg-paper p-4', className]}>
-      <Image src={full} alt={site.logo.fullAlt} width={150} densities={[1, 2]} class="block h-auto w-[150px]" />
-    </span>
+  variant === 'footer' && hasFull ? (
+    <LogoArt file={site.logo.full} maxWidth={176} label={site.logo.fullAlt} class:list={['brand-full w-40 sm:w-44', className]} />
   ) : (
-    <span class:list={['flex items-center gap-3', className]}>
-      {mark && (
-        <span class="brand-badge flex size-10 shrink-0 items-center justify-center rounded-xl bg-paper sm:size-11" aria-hidden="true">
-          <Image src={mark} alt="" height={30} densities={[1, 2]} loading="eager" class="block h-[26px] w-auto sm:h-[30px]" />
-        </span>
-      )}
+    <span class:list={['flex items-center gap-2.5', className]}>
+      <LogoArt file={site.logo.mark} maxWidth={48} class="brand-mark h-9 sm:h-[2.625rem]" />
       <span class="font-serif text-[1.45rem] leading-none font-semibold tracking-tight whitespace-nowrap sm:text-[1.6rem]">
         {parts.map((part) => (part.em ? <em class="font-medium text-tan">{part.text}</em> : part.text))}
       </span>

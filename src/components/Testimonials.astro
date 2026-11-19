@@ -2,6 +2,7 @@
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import Icon from './ui/Icon.astro';
+import ArrowLink from './ui/ArrowLink.astro';
 
 const { testimonials } = site;
 ---
@@ -9,13 +10,12 @@ const { testimonials } = site;
 <section id="testimonials" aria-labelledby="testimonials-title" class="section border-t border-line/60 bg-surface/40">
   <div class="shell">
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-      <SectionHeading id="testimonials-title" eyebrow={testimonials.eyebrow} title={testimonials.title} />
+      <SectionHeading id="testimonials-title" title={testimonials.title} />
       <div class="flex flex-col items-start gap-1 lg:items-end" data-reveal>
         <p class="text-[0.9375rem] text-cream">{testimonials.summary}</p>
-        <a href={testimonials.summaryLink.href} class="arrow-link" target="_blank" rel="noopener noreferrer">
-          {testimonials.summaryLink.label}<span class="sr-only"> on Facebook (opens in new tab)</span>
-          <Icon name="arrow" class="arrow size-4" />
-        </a>
+        <ArrowLink href={testimonials.summaryLink.href} label={testimonials.summaryLink.label} target="_blank" rel="noopener noreferrer">
+          <span class="sr-only"> on Facebook (opens in new tab)</span>
+        </ArrowLink>
       </div>
     </div>
 

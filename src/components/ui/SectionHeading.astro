@@ -2,7 +2,7 @@
 import { splitWords } from '../../utils/text';
 
 /**
- * Tan eyebrow label + large serif headline. Wrap words in *asterisks*
+ * Large serif section headline. Wrap words in *asterisks*
  * to show them in tan italics, e.g. "What I *photograph*".
  * When the heading scrolls into view, each word rises out of its own line
  * (styles: "Headings: each word rises" in global.css).
@@ -10,20 +10,18 @@ import { splitWords } from '../../utils/text';
 interface Props {
   /** id of the heading — the section uses it in aria-labelledby */
   id: string;
-  eyebrow: string;
   title: string;
   intro?: string;
   align?: 'left' | 'center';
   class?: string;
 }
 
-const { id, eyebrow, title, intro, align = 'left', class: className } = Astro.props;
+const { id, title, intro, align = 'left', class: className } = Astro.props;
 const words = splitWords(title);
 ---
 
 <div class:list={['section-heading max-w-2xl', align === 'center' && 'mx-auto text-center', className]} data-reveal>
-  <p class:list={['eyebrow', align === 'center' && 'justify-center']}>{eyebrow}</p>
-  <h2 id={id} class="mt-5 text-[2.6rem] sm:text-5xl lg:text-[3.75rem]">
+  <h2 id={id} class="text-[2.6rem] sm:text-5xl lg:text-[3.75rem]">
     {
       words.map((word, i) => (
         <>

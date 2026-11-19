@@ -13,6 +13,12 @@ const socialLinks = [
   { label: c.personalFacebookLabel, href: social.facebookPersonal, srLabel: `${site.photographerFullName} on Facebook` },
   { label: c.instagramLabel, href: social.instagram, srLabel: `${site.photographerFullName} on Instagram` },
 ].filter((link) => !isPlaceholder(link.href));
+
+// Phones: icon + text on one line, buttons underneath. Wider: all three in a row.
+const rowClass =
+  'contact-row grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 border-b border-line py-5 sm:grid-cols-[auto_1fr_auto] sm:gap-x-6 sm:py-6';
+const badgeClass = 'icon-badge flex size-11 items-center justify-center rounded-full border border-line text-tan';
+const actionsClass = 'col-start-2 flex flex-wrap gap-2 sm:col-start-3 sm:justify-end';
 ---
 
 <section id="contact" aria-labelledby="contact-title" class="section relative isolate overflow-hidden">
@@ -24,7 +30,7 @@ const socialLinks = [
   </div>
 
   <div class="shell">
-    <SectionHeading id="contact-title" eyebrow={c.eyebrow} title={c.title} intro={c.intro} align="center" />
+    <SectionHeading id="contact-title" title={c.title} intro={c.intro} align="center" />
 
     <div class="mt-10 flex flex-col items-center gap-4 text-center" data-reveal style="--reveal-delay: 100ms">
       <BookButton
@@ -35,14 +41,12 @@ const socialLinks = [
       <p class="text-sm text-muted">{c.replyNote}</p>
     </div>
 
-    <!-- Other ways to reach Ruben -->
-    <ul class="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3" data-reveal style="--reveal-delay: 180ms">
-      <li class="card flex flex-col items-center gap-3 p-6 text-center">
-        <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
-          <Icon name="facebook" class="size-5" />
-        </span>
-        <span class="font-medium text-cream">{c.socialTitle}</span>
-        <span class="flex flex-wrap justify-center gap-2">
+    <!-- Other ways to reach Ruben: one row each — icon, what it is, buttons -->
+    <ul class="mx-auto mt-14 max-w-3xl border-t border-line" data-reveal style="--reveal-delay: 180ms">
+      <li class={rowClass}>
+        <span class={badgeClass} aria-hidden="true"><Icon name="facebook" class="size-5" /></span>
+        <p class="font-medium text-cream">{c.socialTitle}</p>
+        <div class={actionsClass}>
           {
             socialLinks.map((link) => (
               <a
@@ -50,44 +54,40 @@ const socialLinks = [
                 target="_blank"
                 rel="noopener"
                 aria-label={`${link.label}: ${link.srLabel} (opens in new tab)`}
-                class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
+                class="pill-link"
               >
                 {link.label}
               </a>
             ))
           }
-        </span>
+        </div>
       </li>
 
-      <li class="card flex flex-col items-center gap-3 p-6 text-center">
-        <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
-          <Icon name="phone" class="size-5" />
-        </span>
-        <span class="font-medium text-cream">{c.phoneLabel}</span>
-        <span class="flex gap-2">
-          <a
-            href={contact.phoneHref}
-            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
-          >
+      <li class={rowClass}>
+        <span class={badgeClass} aria-hidden="true"><Icon name="phone" class="size-5" /></span>
+        <p>
+          <span class="block font-medium text-cream">{c.phoneLabel}</span>
+          <span class="block text-[0.9375rem] text-muted tabular-nums">{contact.phoneDisplay}</span>
+        </p>
+        <div class={actionsClass}>
+          <a href={contact.phoneHref} class="pill-link">
             {c.callLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
           </a>
-          <a
-            href={contact.smsHref}
-            class="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line px-4 text-sm text-cream transition-colors hover:border-tan hover:text-tan"
-          >
+          <a href={contact.smsHref} class="pill-link">
             {c.textLabel}<span class="sr-only"> {contact.phoneDisplay}</span>
           </a>
-        </span>
+        </div>
       </li>
 
-      <li class="flex">
-        <a href={`mailto:${contact.email}`} class="card card-hover flex w-full flex-col items-center gap-3 p-6 text-center">
-          <span class="icon-badge flex size-12 items-center justify-center rounded-full border border-line text-tan">
-            <Icon name="mail" class="size-5" />
-          </span>
-          <span class="font-medium text-cream">{c.emailLabel}</span>
-          <span class="text-sm break-all text-muted">{contact.email}</span>
-        </a>
+      <li class={rowClass}>
+        <span class={badgeClass} aria-hidden="true"><Icon name="mail" class="size-5" /></span>
+        <p class="min-w-0">
+          <span class="block font-medium text-cream">{c.emailLabel}</span>
+          <span class="block text-[0.9375rem] break-all text-muted">{contact.email}</span>
+        </p>
+        <div class={actionsClass}>
+          <a href={`mailto:${contact.email}`} class="pill-link">{c.emailAction}</a>
+        </div>
       </li>
     </ul>
   </div>

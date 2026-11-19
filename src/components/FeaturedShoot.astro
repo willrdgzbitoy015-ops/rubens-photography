@@ -2,7 +2,7 @@
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import LightboxPhoto from './ui/LightboxPhoto.astro';
-import Icon from './ui/Icon.astro';
+import ArrowLink from './ui/ArrowLink.astro';
 
 const { featured } = site;
 const [main, ...more] = featured.photos;
@@ -51,13 +51,10 @@ const [main, ...more] = featured.photos;
     </div>
 
     <div class="lg:col-span-5">
-      <SectionHeading id="featured-title" eyebrow={featured.eyebrow} title={featured.title} />
+      <SectionHeading id="featured-title" title={featured.title} />
       <div data-reveal style="--reveal-delay: 120ms">
         <div class="mt-8">
-          <a href={featured.link.href} class="arrow-link">
-            {featured.link.label}
-            <Icon name="arrow" class="arrow size-4" />
-          </a>
+          <ArrowLink href={featured.link.href} label={featured.link.label} />
         </div>
       </div>
     </div>

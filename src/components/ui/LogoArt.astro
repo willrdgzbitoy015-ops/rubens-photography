@@ -1,0 +1,48 @@
+---
+import { getImage } from 'astro:assets';
+import { getBrandImage } from '../../utils/photos';
+
+/**
+ * Ruben's logo with no background, in the current theme's colors: true
+ * colors on light backgrounds, cream + tan on dark ones (the hero, the
+ * loading screen, the dark theme).
+ *
+ * `file` is an "ink sheet" made from logo.png by `npm run logo-inks`: the
+ * logo's dark brown, tan and black side by side. Styles: "Logo in the
+ * theme's colors" in global.css. Shows nothing if the file is missing.
+ *
+ * Size it with a height or width class; the other side follows the logo.
+ */
+interface Props {
+  file: string;
+  /** Widest the logo is ever shown, in CSS pixels (sets the image size) */
+  maxWidth: number;
+  /** Text for screen readers; leave out when the logo sits next to the name */
+  label?: string;
+  class?: string;
+}
+
+const { file, maxWidth, label, class: className } = Astro.props;
+const sheet = getBrandImage(file);
+const tileWidth = sheet ? sheet.width / 3 : 0;
+// Three tiles, sharp on screens up to 3× density
+const image = sheet
+  ? await getImage({ src: sheet, width: Math.min(sheet.width, Math.round(maxWidth * 3 * 3)), format: 'webp' })
+  : undefined;
+---
+
+{
+  sheet && image && (
+    <span
+      class:list={['logo-art', className]}
+      style={`--logo-inks: url("${image.src}"); aspect-ratio: ${tileWidth} / ${sheet.height}`}
+      role={label ? 'img' : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : 'true'}
+    >
+      <span class="logo-ink logo-ink-brown" />
+      <span class="logo-ink logo-ink-tan" />
+      <span class="logo-ink logo-ink-black" />
+    </span>
+  )
+}

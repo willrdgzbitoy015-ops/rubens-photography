@@ -2,7 +2,7 @@
 import { site } from '../data/site';
 import SectionHeading from './ui/SectionHeading.astro';
 import Photo from './ui/Photo.astro';
-import Icon from './ui/Icon.astro';
+import ArrowLink from './ui/ArrowLink.astro';
 
 const { services } = site;
 
@@ -12,8 +12,10 @@ const cardSizes = '(min-width: 1200px) 269px, (min-width: 1024px) calc((100vw - 
 
 <section id="services" aria-labelledby="services-title" class="section border-t border-line/60 bg-surface/40">
   <div class="shell">
-    <SectionHeading id="services-title" eyebrow={services.eyebrow} title={services.title} intro={services.intro} />
+    <SectionHeading id="services-title" title={services.title} intro={services.intro} />
 
+    <!-- Cards in a row share one height; each card's link sits at its bottom,
+         so the links line up across the row. -->
     <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
       {
         services.items.map((item, i) => (
@@ -31,21 +33,11 @@ const cardSizes = '(min-width: 1200px) 269px, (min-width: 1024px) calc((100vw - 
                 class="zoom-img"
                 style={`object-position: ${item.focus}`}
               />
-              <span
-                class="theme-dark absolute top-4 left-4 rounded-full bg-ink/60 px-3.5 py-1 font-serif text-lg leading-snug text-cream italic backdrop-blur-sm"
-                aria-hidden="true"
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
             </div>
-
-            <div class="flex flex-1 flex-col p-6 sm:p-7">
+            <div class="flex flex-1 flex-col px-6 pt-6 pb-3 sm:px-7 sm:pt-7 sm:pb-4">
               <h3 class="text-[1.6rem] leading-tight text-cream">{item.title}</h3>
               <p class="mt-3 text-[0.9375rem] leading-relaxed text-muted">{item.text}</p>
-              <a href="#portfolio" class="arrow-link mt-auto self-start pt-5" data-show-category={item.category}>
-                {item.cta}
-                <Icon name="arrow" class="arrow size-4" />
-              </a>
+              <ArrowLink href="#portfolio" label={item.cta} class="mt-auto self-start pt-6" data-show-category={item.category} />
             </div>
           </li>
         ))

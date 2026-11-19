@@ -12,7 +12,7 @@ const items = faq.items.filter((item) => !isPlaceholder(item.a));
 <section id="faq" aria-labelledby="faq-title" class="section">
   <div class="shell grid gap-10 lg:grid-cols-12 lg:gap-16">
     <div class="lg:col-span-5">
-      <SectionHeading id="faq-title" eyebrow={faq.eyebrow} title={faq.title} intro={faq.intro} />
+      <SectionHeading id="faq-title" title={faq.title} intro={faq.intro} />
     </div>
 
     <div class="border-t border-line lg:col-span-7" data-reveal style="--reveal-delay: 100ms">

@@ -7,11 +7,12 @@ const { process } = site;
 
 <section id="how-it-works" aria-labelledby="process-title" class="section">
   <div class="shell">
-    <SectionHeading id="process-title" eyebrow={process.eyebrow} title={process.title} />
+    <SectionHeading id="process-title" title={process.title} />
 
     <div class="relative mt-12 lg:mt-16">
-    <!-- Connecting line on desktop -->
-    <span class="absolute top-7 right-[12%] left-7 hidden h-px bg-linear-to-r from-tan/60 via-line to-line lg:block" aria-hidden="true"></span>
+    <!-- Connecting line on desktop: from the centre of the first circle to the
+         centre of the last (4 columns with a 2rem gap; circles are 3.5rem) -->
+    <span class="absolute top-7 right-[calc(25%-3.25rem)] left-7 hidden h-px bg-linear-to-r from-tan/60 via-line to-line lg:block" aria-hidden="true"></span>
     <ol class="relative grid gap-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4">
       {
         process.steps.map((step, i) => (

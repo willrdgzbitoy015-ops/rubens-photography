@@ -152,15 +152,16 @@ export const site = {
 
   /**
    * Logo files in src/assets/brand/. Ruben's original is logo.png (white
-   * background); the two files below were made from it with the white removed,
-   * and are shown on a cream badge so the logo's own colors stay true on the
-   * dark site. If a file is missing, the text wordmark is shown instead.
+   * background). The two "ink sheets" below are made from it by
+   * `npm run logo-inks`: the logo with no background, split into its three
+   * colors so the site can show it in true colors on light backgrounds and in
+   * cream + tan on dark ones. If a file is missing, the text wordmark is shown.
    */
   logo: {
-    /** The "R" mark only — navbar badge */
-    mark: 'logo-mark.png',
+    /** The "R" mark only — navbar and loading screen */
+    mark: 'logo-mark-inks.png',
     /** Full logo with the Baybayin name and tagline — footer */
-    full: 'logo-full.png',
+    full: 'logo-full-inks.png',
     fullAlt: "Ruben's Photography logo: a stylized R with a camera aperture and film strip, the name in Baybayin, and the tagline “Moments, captured. Forever.”",
     /** Just the Baybayin lettering, cut from logo.png (white on transparent) — tagline band */
     baybayin: 'baybayin.png',
@@ -191,7 +192,8 @@ export const site = {
 
   // ── 1. Hero ────────────────────────────────────────────────────────────────
   hero: {
-    eyebrow: `${location.town}, ${location.province} · Photographer`,
+    /** Small line under the buttons: where Ruben is based */
+    place: `${location.town}, ${location.province} · Photographer`,
     headline: "Life's biggest moments, *remembered beautifully*.",
     tagline:
       'Weddings, debuts and celebrations photographed with heart, so you can relive every vow, every dance and every happy tear for years to come.',
@@ -228,7 +230,6 @@ export const site = {
   // ── 3. Featured shoot ──────────────────────────────────────────────────────
   // The first photo is shown large; the other five sit in a row underneath.
   featured: {
-    eyebrow: 'Featured Shoot',
     title: 'Michael & Marian — *Engagement Session*',
     link: { label: 'See the full portfolio', href: '#portfolio' },
     photos: [
@@ -243,7 +244,6 @@ export const site = {
 
   // ── 4. Services ────────────────────────────────────────────────────────────
   services: {
-    eyebrow: 'Services',
     title: 'What I *photograph*',
     intro: 'Every celebration has its own rhythm. I adapt to yours.',
     // Each card shows one photo (from src/assets/photos/) and links to that
@@ -290,7 +290,6 @@ export const site = {
 
   // ── 5. Portfolio ───────────────────────────────────────────────────────────
   portfolio: {
-    eyebrow: 'Portfolio',
     title: 'Stories told in *light*',
     intro: 'A few favorite frames from recent shoots. Tap any photo to view it full size.',
     filters: [
@@ -324,7 +323,6 @@ export const site = {
 
   // ── 6. About ───────────────────────────────────────────────────────────────
   about: {
-    eyebrow: 'About',
     title: `Hi, I'm *${photographer}*`,
     // One string per paragraph. Approved by Ruben (2026-11-12).
     bio: [
@@ -351,7 +349,6 @@ export const site = {
 
   // ── 7. How it works ────────────────────────────────────────────────────────
   process: {
-    eyebrow: 'How It Works',
     title: 'From hello to *your gallery*',
     steps: [
       { title: 'Message Me', text: 'Send your date, location and type of shoot on Messenger.' },
@@ -363,20 +360,23 @@ export const site = {
 
   // ── 9. Contact (#contact) — bookings happen on Facebook / Messenger ────────
   contactSection: {
-    eyebrow: 'Get in touch',
     title: "Let's plan your *shoot*",
     intro: "Message me on Facebook with your date, location and type of shoot, and I'll send you a quote.",
     /** Big button — opens Messenger (or the Facebook Page) in a new tab */
     primaryCta: 'Message me on Messenger',
-    /** Card with Ruben's Facebook Page, his own Facebook account and Instagram */
+    // The list under the big button: one row each for social, phone and email
+    /** Row with Ruben's Facebook Page, his own Facebook account and Instagram */
     socialTitle: 'Facebook & Instagram',
     facebookLabel: 'Facebook Page',
     personalFacebookLabel: `${photographer}'s Facebook`,
     instagramLabel: 'Instagram',
-    phoneLabel: `Call or text ${contact.phoneDisplay}`,
+    /** Row with the phone number (shown under this) and Call / Text buttons */
+    phoneLabel: 'Call or text',
     callLabel: 'Call',
     textLabel: 'Text',
+    /** Row with the email address (shown under this) and a button */
     emailLabel: 'Email',
+    emailAction: 'Send an email',
     replyNote: 'I usually reply within 24 hours.',
   },
 
@@ -385,7 +385,6 @@ export const site = {
   // Never publish made-up reviews. To add one, copy it from Facebook and add
   // another { quote, name, source } entry below.
   testimonials: {
-    eyebrow: 'Kind Words',
     title: 'What clients *say*',
     summary: '100% recommend · 12 reviews on Facebook',
     summaryLink: { label: 'Read the reviews', href: social.facebook },
@@ -419,7 +418,6 @@ export const site = {
 
   // ── 11. FAQ ────────────────────────────────────────────────────────────────
   faq: {
-    eyebrow: 'FAQ',
     title: 'Good to *know*',
     intro: "Can't find your answer? Send me a message — I'm happy to help.",
     items: [

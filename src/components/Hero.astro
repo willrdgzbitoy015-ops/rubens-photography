@@ -59,11 +59,10 @@ const isSlideshow = slides.length > 1;
 
   <div class="shell pt-28 pb-16 sm:pb-20 lg:pb-24">
     <div class="max-w-3xl">
-      <p class="eyebrow hero-eyebrow hero-in max-sm:tracking-[0.2em] max-sm:before:hidden">{hero.eyebrow}</p>
       <!-- Each word surfaces out of a blur, one after another -->
       <h1
         id="hero-title"
-        class="hero-title mt-6 text-[clamp(2.9rem,12.5vw,6.5rem)] leading-[0.98] text-cream"
+        class="hero-title text-[clamp(2.9rem,12.5vw,6rem)] leading-[0.98] text-cream"
         style="--delay: 150ms"
       >
         {
@@ -87,6 +86,10 @@ const isSlideshow = slides.length > 1;
         </a>
         <BookButton label={hero.bookCta} variant="outline" />
       </div>
+      <p class="hero-place hero-in mt-8 flex items-center gap-2.5 text-sm text-cream/75" style="--delay: 1050ms">
+        <Icon name="pin" class="size-4 shrink-0 text-tan-bright" />
+        {hero.place}
+      </p>
     </div>
   </div>
 </section>

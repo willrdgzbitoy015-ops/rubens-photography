@@ -1,24 +1,19 @@
 ---
-import { Image } from 'astro:assets';
 import { site } from '../data/site';
-import { getBrandImage } from '../utils/photos';
+import LogoArt from './ui/LogoArt.astro';
 
 /**
  * Loading screen: Ruben's "R" mark with a thin progress line under it. When
  * the page is ready the screen fades away (src/scripts/preloader.ts).
  *
  * Only shown once JavaScript runs (the `js` class from BaseLayout's inline
- * script). Always dark, in both color themes.
+ * script). Always dark, in both color themes, so the mark is cream + tan.
  */
-
-const mark = getBrandImage(site.logo.mark);
 ---
 
 <div class="preloader theme-dark" aria-hidden="true" data-preloader>
   <div class="preloader-center">
-    <span class="preloader-mark">
-      {mark && <Image src={mark} alt="" height={40} densities={[1, 2]} loading="eager" class="block h-9 w-auto" />}
-    </span>
+    <LogoArt file={site.logo.mark} maxWidth={48} class="preloader-mark h-14" />
     <span class="preloader-bar"><span class="preloader-bar-fill"></span></span>
   </div>
 </div>

@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "og-image": "node tools/make-og-image.mjs",
+    "logo-inks": "node tools/make-logo-inks.mjs",
     "astro": "astro"
   },
   "dependencies": {
