@@ -40,6 +40,32 @@ const jsonLd = {
 };
 // Escape "<" so the JSON can never close the <script> tag early.
 const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+
+// Runs before the page is drawn, so there's no flash of the wrong theme:
+// applies the visitor's saved light/dark choice, marks that JavaScript works
+// (for the loading screen and photo effects), and holds the hero's entrance
+// until the loading screen opens, with a 6-second failsafe.
+// It's kept as a string so its hash can be added to the Content Security
+// Policy (astro.config.mjs) — Astro doesn't hash is:inline scripts itself, and
+// without the hash the browser would refuse to run it.
+const themeScript = `(() => {
+  const root = document.documentElement;
+  let theme = ${JSON.stringify(site.theme.default)};
+  try {
+    const saved = localStorage.getItem('theme');
+    if (${JSON.stringify(site.theme.showToggle)} && (saved === 'light' || saved === 'dark')) theme = saved;
+  } catch {}
+  root.dataset.theme = theme;
+  const bar = document.querySelector('meta[name="theme-color"]');
+  if (bar && bar.dataset[theme]) bar.content = bar.dataset[theme];
+  root.classList.add('js', 'is-preloading');
+  setTimeout(() => {
+    root.classList.remove('is-preloading');
+    root.classList.add('loader-timeout');
+  }, 6000);
+})();`;
+const themeDigest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(themeScript));
+Astro.csp?.insertScriptHash(`sha256-${btoa(String.fromCharCode(...new Uint8Array(themeDigest)))}`);
 ---
 
 <!doctype html>
@@ -57,28 +83,8 @@ const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       data-dark={site.theme.barColor.dark}
     />
 
-    <!-- Runs before the page is drawn, so there's no flash of the wrong theme:
-         applies the visitor's saved light/dark choice, marks that JavaScript
-         works (for the loading screen and photo effects), and holds the hero's
-         entrance until the loading screen opens, with a 6-second failsafe. -->
-    <script is:inline define:vars={{ defaultTheme: site.theme.default, allowToggle: site.theme.showToggle }}>
-      (() => {
-        const root = document.documentElement;
-        let theme = defaultTheme;
-        try {
-          const saved = localStorage.getItem('theme');
-          if (allowToggle && (saved === 'light' || saved === 'dark')) theme = saved;
-        } catch {}
-        root.dataset.theme = theme;
-        const bar = document.querySelector('meta[name="theme-color"]');
-        if (bar && bar.dataset[theme]) bar.content = bar.dataset[theme];
-        root.classList.add('js', 'is-preloading');
-        setTimeout(() => {
-          root.classList.remove('is-preloading');
-          root.classList.add('loader-timeout');
-        }, 6000);
-      })();
-    </script>
+    <!-- Theme + loading-screen setup (see themeScript above). -->
+    <script is:inline set:html={themeScript} />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

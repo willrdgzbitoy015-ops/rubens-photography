@@ -123,18 +123,28 @@ so nothing is broken in the meantime.
 2. Create a free account on [Netlify](https://netlify.com) and sign in with GitHub.
 3. Click **Add new site → Import an existing project → GitHub** and pick the repository.
 4. The settings fill in automatically from `netlify.toml`. Click **Deploy**.
-5. After a minute or two you get an address like `https://something.netlify.app`.
-   You can change it under **Site configuration → Change site name**.
-6. Open `astro.config.mjs` and replace `[your-site]` with that name, for example:
-   ```js
-   const SITE_URL = 'https://rubensphotography.netlify.app';
-   ```
-   This makes Facebook link previews show the right picture.
+5. Under **Site configuration → Change site name**, set the name to `rubens-photography`,
+   so the address is `https://rubens-photography.netlify.app`. That's the address already
+   set as `SITE_URL` in `astro.config.mjs`. If you pick a different name, change it there
+   too, or Facebook link previews will point to the wrong place.
 
-From now on, every change you push to GitHub goes live automatically.
+From now on, every change you push to GitHub goes live automatically. On Netlify's free
+plan each live deploy uses some of the monthly credits, so push finished batches of changes
+rather than every small edit.
 
-> Prefer **Vercel**? Import the same GitHub repository at [vercel.com](https://vercel.com).
-> It detects Astro by itself; no extra settings are needed.
+### Security
+
+- `netlify.toml` sends security headers with every page (no framing by other sites,
+  HTTPS only, no camera/microphone/location access, and so on).
+- `astro.config.mjs` turns on a Content Security Policy: the browser only runs the
+  scripts and styles this site ships. It only applies to the built site, so test with
+  `npm run build` then `npm run preview`, not `npm run dev`.
+- If you add a script, font or embed from another website (for example a Google Map),
+  add its address to the `security.csp` settings in `astro.config.mjs`, or the browser
+  will block it.
+- You can check the live site's headers at [securityheaders.com](https://securityheaders.com).
+
+> **Vercel** works too, but its free plan doesn't allow business sites.
 
 ---
 
@@ -146,6 +156,8 @@ From now on, every change you push to GitHub goes live automatically.
    (easiest), or add the DNS records it shows you at your registrar.
 4. HTTPS (the padlock) is set up for you automatically, usually within an hour.
 5. Update `SITE_URL` in `astro.config.mjs` to the new domain and push the change.
+6. Once the domain works, you can make the HTTPS rule stricter in `netlify.toml`:
+   `Strict-Transport-Security = "max-age=63072000; includeSubDomains"`.
 
 ---
 

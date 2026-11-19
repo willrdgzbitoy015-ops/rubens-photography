@@ -2,16 +2,40 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
-// [your-site] — replace with your real Netlify address (or custom domain)
-// once the site is live, e.g. 'https://rubensphotography.netlify.app'.
-// It's used for absolute URLs in Facebook share previews (og:image, og:url).
-const SITE_URL = 'https://[your-site].netlify.app';
+// The live address. Used for absolute URLs in Facebook share previews
+// (og:image, og:url) and the canonical link. If Ruben moves the site to his
+// own domain later, change it here.
+const SITE_URL = 'https://rubens-photography.netlify.app';
 
 export default defineConfig({
-  // Square brackets aren't allowed in a URL, so they're stripped until you
-  // fill in the placeholder above. Once it's filled in, this does nothing.
-  site: SITE_URL.replace(/[[\]]/g, ''),
+  site: SITE_URL,
   output: 'static',
+  security: {
+    // Content Security Policy: the browser only runs scripts and styles this
+    // site ships (Astro adds a hash for each one at build time), so injected
+    // code can't run. Only works in `npm run build` + `preview`, not `dev`.
+    // The other security headers live in netlify.toml.
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        // Google Fonts serves the font files from this domain.
+        "font-src 'self' https://fonts.gstatic.com",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ],
+      styleDirective: {
+        resources: [
+          { resource: "'self'", kind: 'element' },
+          // The Google Fonts stylesheet.
+          { resource: 'https://fonts.googleapis.com', kind: 'element' },
+          // Inline style="" attributes (photo focus points, animation delays).
+          { resource: "'unsafe-inline'", kind: 'attribute' },
+        ],
+      },
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
