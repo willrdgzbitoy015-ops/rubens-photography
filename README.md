@@ -116,25 +116,29 @@ so nothing is broken in the meantime.
 
 ---
 
-## 6. Put it online with Netlify (free)
+## 6. Put it online with Cloudflare Pages (free)
+
+Cloudflare Pages' free plan allows business sites, adds no badge to the page, and has no
+traffic limit that pauses the site.
 
 1. Create a free account on [GitHub](https://github.com) and upload this folder as a new repository
    (GitHub Desktop is the easiest way).
-2. Create a free account on [Netlify](https://netlify.com) and sign in with GitHub.
-3. Click **Add new site → Import an existing project → GitHub** and pick the repository.
-4. The settings fill in automatically from `netlify.toml`. Click **Deploy**.
-5. Under **Site configuration → Change site name**, set the name to `rubens-photography`,
-   so the address is `https://rubens-photography.netlify.app`. That's the address already
-   set as `SITE_URL` in `astro.config.mjs`. If you pick a different name, change it there
-   too, or Facebook link previews will point to the wrong place.
+2. Create a free account on [Cloudflare](https://dash.cloudflare.com/sign-up).
+3. Go to **Workers & Pages → Create → Pages → Import an existing Git repository**, connect
+   GitHub, and pick the repository.
+4. Use these settings:
+   - Project name: `rubens-photography` (this becomes `https://rubens-photography.pages.dev`,
+     the address already set as `SITE_URL` in `astro.config.mjs`. If you get a different
+     address, change it there too, or Facebook link previews will point to the wrong place.)
+   - Production branch: `main`
+   - Framework preset: **Astro** (build command `npm run build`, output directory `dist`)
+5. Click **Save and Deploy**. The Node.js version comes from the `.node-version` file.
 
-From now on, every change you push to GitHub goes live automatically. On Netlify's free
-plan each live deploy uses some of the monthly credits, so push finished batches of changes
-rather than every small edit.
+From now on, every change you push to GitHub goes live automatically.
 
 ### Security
 
-- `netlify.toml` sends security headers with every page (no framing by other sites,
+- `public/_headers` sends security headers with every page (no framing by other sites,
   HTTPS only, no camera/microphone/location access, and so on).
 - `astro.config.mjs` turns on a Content Security Policy: the browser only runs the
   scripts and styles this site ships. It only applies to the built site, so test with
@@ -142,22 +146,25 @@ rather than every small edit.
 - If you add a script, font or embed from another website (for example a Google Map),
   add its address to the `security.csp` settings in `astro.config.mjs`, or the browser
   will block it.
+- Don't turn on Cloudflare **Web Analytics** for the project without also allowing
+  `https://static.cloudflareinsights.com` in the CSP; its script would be blocked.
 - You can check the live site's headers at [securityheaders.com](https://securityheaders.com).
 
-> **Vercel** works too, but its free plan doesn't allow business sites.
+> **Netlify** reads the same `public/_headers` file, but its free plan now adds a "Powered
+> by Netlify" badge that the CSP would block. **Vercel**'s free plan doesn't allow business sites.
 
 ---
 
 ## 7. Use your own domain (e.g. rubensphotography.com)
 
 1. Buy the domain from any registrar (Namecheap, GoDaddy, Cloudflare and so on).
-2. In Netlify, go to **Domain management → Add a domain** and type it in.
-3. Follow Netlify's instructions. Either point the domain's nameservers to Netlify
-   (easiest), or add the DNS records it shows you at your registrar.
+2. In Cloudflare, open the Pages project and go to **Custom domains → Set up a custom domain**.
+3. Follow Cloudflare's instructions. Either move the domain's nameservers to Cloudflare
+   (easiest), or add the DNS record it shows you at your registrar.
 4. HTTPS (the padlock) is set up for you automatically, usually within an hour.
 5. Update `SITE_URL` in `astro.config.mjs` to the new domain and push the change.
-6. Once the domain works, you can make the HTTPS rule stricter in `netlify.toml`:
-   `Strict-Transport-Security = "max-age=63072000; includeSubDomains"`.
+6. Once the domain works, you can make the HTTPS rule stricter in `public/_headers`:
+   `Strict-Transport-Security: max-age=63072000; includeSubDomains`.
 
 ---
 
